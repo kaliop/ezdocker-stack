@@ -1,0 +1,8 @@
+# eZPublish cronjobs
+#
+#
+# Note: running the cronjobs twice for env and dev environments is a bit weird, since they share the same db
+#       but their ideas about which caches to expire (including varnish) might differ
+
+# dev env
+

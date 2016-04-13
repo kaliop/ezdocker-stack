@@ -1,0 +1,8 @@
+solr:
+  build: .
+  hostname: solr4.10
+  privileged: true
+  ports:
+   - "8983:8983"
+  cap_add:
+    - SYS_PTRACE

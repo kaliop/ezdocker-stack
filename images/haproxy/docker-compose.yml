@@ -1,0 +1,7 @@
+haproxy:
+  build: .
+  hostname: khaproxy
+  privileged: true
+  ports:
+   - "80:80"
+   - "8000:8000"

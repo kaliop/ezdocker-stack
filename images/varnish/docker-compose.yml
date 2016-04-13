@@ -1,0 +1,8 @@
+varnish4:
+  build: .
+  hostname: kvarnish4
+  privileged: true
+  ports:
+   - "81:81"
+  cap_add:
+    - SYS_PTRACE

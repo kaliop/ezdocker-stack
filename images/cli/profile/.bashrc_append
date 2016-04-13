@@ -1,0 +1,47 @@
+
+## CUSTOM environment configuration - added into the container by Docker build
+
+# this one comes from the docker-compose env vars, no need to hardcode it here
+#export SSH_AUTH_SOCK=/ssh-agent
+
+alias la='ls -A'
+alias ll='ls -lhF'
+alias l='ls -CF'
+
+# @todo clean up the list of eZ5 aliases
+alias ez5cacheclear='php ezpublish/console ca:c'
+alias ez5installassets='php ezpublish/console assets:install --relative --symlink web'
+alias dumpassets='php ezpublish/console assetic:dump'
+alias indexsolrez5='cd ezpublish_legacy && php extension/ezfind/bin/php/updatesearchindexsolr.php -s site_admin && cd -'
+
+# note: deactivated, as notify-send is only useful when a GUI is installed, and it comes with a thousand package dependencies
+# Add an "alert" alias for long running commands.  Use like so: `sleep 10; alert`
+#alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
+
+if [ -f ~/.git-prompt.sh ]; then
+  . ~/.git-prompt.sh
+fi
+
+GIT_CONFIGURED=$(git config --list | grep "user.email")
+if [ "$GIT_CONFIGURED" == "" ]; then
+    echo "Your git profile does not seem to be configured"
+    echo "Please enter you user name (i.e. John Doe):"
+    read LINE
+    git config --global user.name "$LINE"
+    echo "Please enter your email:"
+    read LINE
+    git config --global user.email "$LINE"
+fi
+
+PROMPT_U_COLOR='0;1;32m'
+GIT_U_COLOR='0;1;36m'
+
+# Custom prompt to display current git branch
+PS1='${debian_chroot:+($debian_chroot)}\[\033[${PROMPT_U_COLOR}\]\u\[\033[0;37m\]@\h\[\033[00m\]:\[\033[0;37m\]\[\033[1;33m\]\w\[\033[${GIT_U_COLOR}\]$(__git_ps1)\[\033[00m\]\$ '
+
+# Move to the most commonly used dir :-)
+cd /var/www/
