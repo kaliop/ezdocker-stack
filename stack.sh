@@ -105,9 +105,10 @@ buildDockerComposeConfigFileIfNeeded() {
                 # In order to make this better than just letting the dev run git clone, we shold check many more things...
                 # F.e. build the git url automatically using the Git repo if the given url is not full...
                 read -p "'site' folder does not exist: please type the Git full url to clone your project : " git_url
-                if [ "$git_url" = "" ] || [ "$git_url" != "ssh*" ] || [ "$git_url" != "http*" ]; then
-                    echo "ERROR ! invalid or empty git url : aborting ..."
-                    exit ;
+                git ls-remote "$git_url" &>-
+                if [ "$?" -ne 0 ]; then
+                    echo "ERROR ! invalid or empty git repository : aborting ..."
+                    exit 1;
                 fi
 
                 git clone $git_url site
