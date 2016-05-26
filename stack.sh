@@ -39,7 +39,7 @@ buildDockerComposeLocalEnvFileIfNeeded() {
 
 buildDockerPhpImage() {
 
-    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 or 5.6) " php_version
+    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 or 5.6 - default: 5.6) " php_version
     php_version=${php_version:-5.6}
 
     echo "Deleting web and cli images"
@@ -85,11 +85,11 @@ buildDockerComposeConfigFileIfNeeded() {
 
         echo "Generating config file $DOCKER_COMPOSE_CONFIG_FILE...";
 
-        echo "What is your main project name ?"
-        read DOCKER_PROJECT_NAME
+        read -p "What is your main project name ? : " DOCKER_PROJECT_NAME
+        DOCKER_PROJECT_NAME=${DOCKER_PROJECT_NAME:-myproject}
 
-        echo "Will you use this docker stack for only one project ? (y/n)"
-        read site_project
+        read -p "Will you use this docker stack for only one project ? [default: no] (y/n) : " site_project
+        site_project=${site_project:-n}
 
         if [ "$site_project" = "y" ]
         then
@@ -116,8 +116,8 @@ buildDockerComposeConfigFileIfNeeded() {
 
         else
             # Multi site stack
-            read -p "Enter the full root path of your projects on your host machine (Ex : /home/user/www/ ): " www_root
-            #read www_root;
+            read -p "Enter the full root path of your projects on your host machine (default: /home/$(whoami)/www/): " www_root
+            www_root=${www_root:-/home/$(whoami)/www}
 
             if [ ! -d "$www_root" ]; then
         		echo "Root directory $www_root does not exist ! Aborting ..."
@@ -128,8 +128,7 @@ buildDockerComposeConfigFileIfNeeded() {
         fi
 
         # Ask for storage mountpoints
-        read -p "Enter your project ez storage path on host (Ex: /mnt/user/workspace/user/project-ezpublish/var/project/storage/ ) : " storage_local_path
-        #storage_local_path=${storage_local_path:-/tmp/storage/}
+        read -p "Enter your project ez storage path on host (Ex: /home/user/project-ezpublish/var/project/storage/ ) : " storage_local_path
 
         if [ ! -d "$storage_local_path" ]; then
         	echo "Directory $storage_local_path does not exist ! Aborting ..."
@@ -143,7 +142,7 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "(Don't forget to symlink your storage in your ez5 instance after 1st run)"
 
         # Ask for timezone for docker args (needs docker-compsoe v2 format)
-        read -p "Enter your current timezone (Europe/Paris) : " timezone
+        read -p "Enter your current timezone (default: Europe/Paris) : " timezone
         timezone=${timezone:-Europe/Paris}
 
         echo "Configuring timezone for php ..."
@@ -151,15 +150,15 @@ buildDockerComposeConfigFileIfNeeded() {
         echo -e "[Date]\ndate.timezone=$timezone" > config/web/php5/timezone.ini
 
 		# Ask for locale for docker args (needs docker-compsoe v2 format)
-        read -p "Enter your current locale (fr_FR.UTF-8) : " locale
+        read -p "Enter your current locale (default: fr_FR.UTF-8) : " locale
         locale=${locale:-fr_FR.UTF-8}
 
         # Ask for custom vcl file path
-        read -p "Enter path to Varnish vcl file (./config/varnish/ez54.vcl) : " vcl_filepath
+        read -p "Enter path to Varnish vcl file (default: ./config/varnish/ez54.vcl) : " vcl_filepath
         vcl_filepath=${vcl_filepath:-./config/varnish/ez54.vcl}
 
         # Ask for custom solr conf folder path
-        read -p "Enter path to solr configuration folder : (./config/solr) " solr_conf_path
+        read -p "Enter path to solr configuration folder (default: ./config/solr) : " solr_conf_path
         solr_conf_path=${solr_conf_path:-./config/solr}
 
         #Ash for PHP version
@@ -187,6 +186,9 @@ purgeLogs() {
     find logs/ -maxdepth 2 -name "*.log*" -delete
 }
 
+update() {
+    git pull
+}
 
 # ### Live code starts here ###
 
@@ -235,6 +237,13 @@ case "$1" in
 
     purgelogs)
         purgeLogs
+        ;;
+
+    update)
+        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
+        update
+        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" build
+        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
     '')

@@ -186,6 +186,21 @@ To start the run script navigate to the project folder and run:
 Note: if you get an error about SSH_AUTH_SOCK, see point 2 above
 Note: if any of the images fails to start, check the logs via  `docker logs <image_name>` or `docker-compose logs` to see all logs
 
+## Updating the Environment
+
+To pull in the latest changes and restart all the containers, just run:
+
+    ./stack.sh update
+
+*NB:* this will apply any changes coming from the git repository which contains the definition of the stack, but it
+will not update the base Docker images in use. If the base images have been updated, because of eg. known security
+vulnerabilities, it is recommended to rebuild all the containers by stopping them and the running:
+
+    docker-compose build --pull
+
+Note that this might take a while and need a lot of disk space. Remove unused container images to free some space.
+
+
 ## Changing the environment configuration
 
 The stack configuration is mainly managed by the `docker-compose.yml` file, which is ignored in GIT.
