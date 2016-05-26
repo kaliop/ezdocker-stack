@@ -1,5 +1,4 @@
 # Project specific
-/app/.config
 /docs/*
 /logs/*
 

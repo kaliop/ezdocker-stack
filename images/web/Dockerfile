@@ -84,6 +84,11 @@ RUN a2ensite 000-default.conf
 
 COPY sites/controlpanel/ /home/site/controlpanel/
 
+# Run composer install for phpmemadmin vendors
+RUN cd /home/site/controlpanel/phpmemadmin && \
+    curl -sS https://getcomposer.org/installer | php -- && \
+    php composer.phar install
+
 # -----------------------------------------------------------------------------
 
 # Clear archives in apt cache folder
