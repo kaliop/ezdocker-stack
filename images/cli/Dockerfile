@@ -58,6 +58,7 @@ RUN addgroup --gid 1013 site && \
     curl -o /home/site/.git-prompt.sh -OL https://github.com/git/git/raw/master/contrib/completion/git-prompt.sh; \
     cp /etc/skel/.* /home/site/; \
     cat /tmp/profile/.bashrc_append >> /home/site/.bashrc; \
+    cat /tmp/profile/.vimrc_append >> /home/site/.vimrc; \
     cp /tmp/profile/.gitconfig /home/site/; \
     chown -R site:site /home/site;
 

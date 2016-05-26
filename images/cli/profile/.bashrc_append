@@ -4,15 +4,41 @@
 # this one comes from the docker-compose env vars, no need to hardcode it here
 #export SSH_AUTH_SOCK=/ssh-agent
 
+HISTCONTROL=ignoreboth
+
 alias la='ls -A'
 alias ll='ls -lhF'
+alias lla='ls -lA'
 alias l='ls -CF'
 
-# @todo clean up the list of eZ5 aliases
-alias ez5cacheclear='php ezpublish/console ca:c'
+alias ez5cacheclear='php ezpublish/console cache:clear'
 alias ez5installassets='php ezpublish/console assets:install --relative --symlink web'
 alias dumpassets='php ezpublish/console assetic:dump'
-alias indexsolrez5='cd ezpublish_legacy && php extension/ezfind/bin/php/updatesearchindexsolr.php -s site_admin && cd -'
+alias indexsolrez5='php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php'
+
+# smart eZ4 cache clear function
+function ez4cacheclear()
+{
+    local is_ez4_dir=$(test $(ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    local has_ez4_instance_into_web=$(test $(cd web 2>/dev/null;ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    if $is_ez4_dir; then
+        echo "Clearing eZ4 cache: php bin/php/ezcache.php $@"
+        php bin/php/ezcache.php $@
+    elif [ -d ezpublish_legacy ]; then
+        echo "Clearing eZ4 legacy cache: php bin/php/ezcache.php $@"
+        pushd ezpublish_legacy > /dev/null
+        php bin/php/ezcache.php $@
+        popd > /dev/null
+    elif $has_ez4_instance_into_web; then
+        echo "Clearing eZ4 web cache: php bin/php/ezcache.php $@"
+        pushd web > /dev/null
+        php bin/php/ezcache.php $@
+        popd > /dev/null
+    else
+        echo "No eZ legacy instance found"
+    fi
+}
+alias ez4cacheclearall='ez4cacheclear --clear-all'
 
 # note: deactivated, as notify-send is only useful when a GUI is installed, and it comes with a thousand package dependencies
 # Add an "alert" alias for long running commands.  Use like so: `sleep 10; alert`
