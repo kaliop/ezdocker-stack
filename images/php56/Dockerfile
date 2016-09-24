@@ -25,7 +25,7 @@ RUN apt-get update && \
 
 # PHP config
 # -----------------------------------------------------------------------------
-# no xdebug :-)
+# remove default xdebug config
 RUN rm /etc/php5/apache2/conf.d/20-xdebug.ini
 RUN rm /etc/php5/cli/conf.d/20-xdebug.ini
 
