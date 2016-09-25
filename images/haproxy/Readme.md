@@ -1,7 +1,7 @@
-Haproxy Docker Container
+Haproxy Docker image
 ===================
 
-This container (based on Debian 8) runs a hapoxy 1.5 service.
+This image (based on Debian 8) runs a haproxy 1.5 service.
 
 ryslog is installed in order to have haproxy logs available in /var/log/haproxy.
 
@@ -10,24 +10,23 @@ Exposed ports are 80, 443, 8000.
 You can copy the haproxy_example_kaliop.cfg file in your project and mount it as a volume in /etc/haproxy/haproxy.cfg : this configuration file will use linked 'web', 'varnish' and 'solr' containers as backends that will be accessible via corresponding 'backend' header on port 80.
 
 
-How to build & run the container
+How to run the container
 --------------------------------
 
-* Check out this repository in a directory somewhere, and execute commands within it 
 * If you are working behind a corporate http proxy, run the [klabs/forgetproxy container](https://registry.hub.docker.com/u/klabs/forgetproxy/)
-* Build the image
+* Run the container
 
-``` sh
-docker build -t haproxy .
-```
+You can run the container with the docker run command :
 
-If the build fails when fetching APT repositories/packages , try to build the image without cache :
-    
-``` sh
-docker build --no-cache -t haproxy .
-```
 
-## How to use docker-compose to run container
+  ``` sh
+    docker run klabs/haproxy
+    ```
+
+ But is is strongly recommended to use docker-compose with the stack.sh script provided in [ezdocker-stack](https://github.com/kaliop/ezdocker-stack/) repository.
+
+How to use docker-compose to run container
+--------------------------------
 
 ``` sh
 docker-compose up -d
