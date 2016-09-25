@@ -89,7 +89,7 @@ COPY sites/controlpanel/ /home/site/controlpanel/
 # Run composer install for phpmemadmin vendors
 RUN cd /home/site/controlpanel/phpmemadmin && \
     curl -sS https://getcomposer.org/installer | php -- && \
-    php composer.phar install
+    php composer.phar install --no-dev --ignore-platform-reqs
 
 # -----------------------------------------------------------------------------
 

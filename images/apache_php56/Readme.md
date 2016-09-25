@@ -1,10 +1,10 @@
 # Apache/php 5.6 web server
 
-This is the main web server container for the project. The source code for the eZ Publish installation will be run from here.
+This is the main web server image for the project. The source code for the eZ Publish installation will be run from here.
 
-Unlike the other containers there is more than one software package installed here as they are necessary for the running of eZ Publish.
+Unlike the other images, there is more than one software package installed here as they are necessary for the running of eZ Publish.
 
-Container is built on Ubuntu 14.04
+Container is built on Debian Jessie
 
 The software packages installed are:
 
@@ -13,12 +13,14 @@ The software packages installed are:
 * ImageMagick 6.7
 * JAVA (OpenJDK 7)
 * Curl
+* Nano
 
 ## Apache config
 
 Apache listens on ports:
+* 80 (dev vhost)
+* 82 (demo vhost)
 * 88 (controlpanel vhost)
-* NNN (enabled by site vhosts)
 
 Those can be remapped when running the container.
 
@@ -31,11 +33,11 @@ This way it is faster to modify a vhost config and restart the Apache service wi
 
 * Run the container
 
-You can run the container with the basic run Docker command :
+You can run the container with the docker run command :
 
 
 	``` sh
     docker run klabs/apache_php56
     ```
 
- But is is strongly recommended to use docker-compose with the stack.sh script provided in ezdocker stack repository (https://github.com/kaliop/ezdocker-stack/)
+ But is is strongly recommended to use docker-compose with the stack.sh script provided in [ezdocker-stack](https://github.com/kaliop/ezdocker-stack/) repository.

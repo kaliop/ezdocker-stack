@@ -36,9 +36,14 @@ chown -R site:site /var/lock/apache2
 
 echo [`date`] Starting the service
 
-#Load dynamic vhost (including common config) files are found
+#Load ez5 dynamic vhost (including common config) if files are found
 if [ -f "/etc/apache2/sites-available/001-dynamic-vhost.conf" ] && [ -f "/etc/apache2/sites-available/ez5-common.conf" ];then
 	a2ensite 001-dynamic-vhost.conf
+fi
+
+#Load ezplatform dynamic vhost (including common config) if files are found
+if [ -f "/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf" ] && [ -f "/etc/apache2/sites-available/ezplatform-common.conf" ];then
+    a2ensite 002-dynamic-vhost-ezplatform.conf
 fi
 
 
