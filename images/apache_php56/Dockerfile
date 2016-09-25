@@ -1,6 +1,8 @@
-FROM ez_php
+FROM klabs/php56
 MAINTAINER Kaliop
-LABEL apache.version=2.4
+LABEL apache.version=2.4 \
+      php.version=5.6 \
+      application.type=ezpublish
 
 ARG DOCKER_TIMEZONE=Europe/Paris
 ARG DOCKER_LOCALE=fr_FR.UTF-8

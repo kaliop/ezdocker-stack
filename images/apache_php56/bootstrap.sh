@@ -34,17 +34,13 @@ fi
 
 chown -R site:site /var/lock/apache2
 
-# @todo we have to install the newrelic agent 1st...
-#if [ "$USE_NEWRELIC" == 1  ] ; then
-#    service newrelic-daemon restart
-#else
-#    service newrelic-daemon stop
-#fi
-
-
 echo [`date`] Starting the service
 
-a2ensite 001-dynamic-vhost.conf
+#Load dynamic vhost (including common config) files are found
+if [ -f "/etc/apache2/sites-available/001-dynamic-vhost.conf" ] && [ -f "/etc/apache2/sites-available/ez5-common.conf" ];then
+	a2ensite 001-dynamic-vhost.conf
+fi
+
 
 trap clean_up SIGTERM
 

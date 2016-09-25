@@ -1,4 +1,4 @@
-# WEB
+# Apache/php 5.6 web server
 
 This is the main web server container for the project. The source code for the eZ Publish installation will be run from here.
 
@@ -22,27 +22,20 @@ Apache listens on ports:
 
 Those can be remapped when running the container.
 
-The controlpanel vhost is baked-in into the container, whereas the single vhosts config files are mounted as volumes.
+The controlpanel vhost is baked-in into the container, whereas eZ Publish dynamic virtual hosts config files must be mounted as volumes.
 This way it is faster to modify a vhost config and restart the Apache service without having to rebuild the container.
 
-## How to build & run the container
+## How to run the container
 
-* Check out this repository in a directory somewhere, and execute commands within it
 * If you are working behind a corporate http proxy, run [the klabs/forgetproxy container](https://registry.hub.docker.com/u/klabs/forgetproxy/)
-* Build the image
-
-    NOTE: Please check the language settings and time zone. You will need to manually change these from the UK settings.
-
-    ``` sh
-    docker build -t web .
-    ```
-
-    If the build fails when fetching APT repositories/packages , try to build the image without cache :
-
-    ``` sh
-    docker build --no-cache -t web .
-    ```
 
 * Run the container
 
-You should run the container using docker-compose. Please refer to the repository [ReadMe](../../ReadMe.md) for instructions.
+You can run the container with the basic run Docker command :
+
+
+	``` sh
+    docker run klabs/apache_php56
+    ```
+
+ But is is strongly recommended to use docker-compose with the stack.sh script provided in ezdocker stack repository (https://github.com/kaliop/ezdocker-stack/)
