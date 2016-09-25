@@ -2,39 +2,35 @@ Solr Container
 =========
 
 This container runs a 4.10 SOLR server with java 7 installed.  
-The SOLR schema is the one provided by ezsystems (from ezfind extension) to usewith  ezpublish 5.  
+The SOLR schema is the one provided by ezsystems (from ezfind extension) to be used with ezpublish 5.  
 Solr data folder can be mounted from host system to persist data when the container is restarted.
+Solr will run by default on port 8983 but you can change the default port when runnning the container.
 
-How to build & run the container
+How to run the container
 --------------------------------
 
-* Check out this repository in a directory somewhere, and execute commands within it
 * If you are working behind a corporate http proxy, run the [klabs/forgetproxy container](https://registry.hub.docker.com/u/klabs/forgetproxy/)
-* Build the image
+* Run the container
 
-``` bash
-$ docker build -t kaliop/solr .
-```
+You can run the container with the basic run Docker command :
 
-If the build fails when fetching APT repositories/packages , try to build the image without cache :
 
-``` sh
-docker build --no-cache -t kaliop/varnish4 .
-```
+	``` sh
+    docker run klabs/solr4
+    ```
 
-## How to enter the container
+ But is is strongly recommended to use docker-compose with the stack.sh script provided in ezdocker stack repository (https://github.com/kaliop/ezdocker-stack/)
 
-``` sh
-./enter.sh
-```
+How to enter the container
+--------------------------------
 
-Or, manually:
 
-``` sh
-docker exec -ti solr bash
-```
+	``` sh
+	docker exec -ti solr bash
+	```
 
-## How to restart solr dameon
+How to restart solr daemon
+--------------------------------
 
 * Enter the container
 
@@ -44,7 +40,8 @@ docker exec -ti solr bash
 /etc/init.d/solr restart
 ```
 
-## How to use docker-compose to run container
+How to use docker-compose to run the container
+--------------------------------
 
 First install docker-compose :
 
@@ -56,7 +53,7 @@ chmod +x ~/bin/docker-compose
 Then run the container with the following command :
 
 ``` sh
-docker-compose -p kaliop up -d
+docker-compose -p solr up -d
 ```
 
 If you wish to add more options to docker compose, you will have to create your own project.yml file which will extend the one present in this repo.
