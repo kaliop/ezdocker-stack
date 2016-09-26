@@ -13,8 +13,13 @@ alias l='ls -CF'
 
 alias ez5cacheclear='php ezpublish/console cache:clear'
 alias ez5installassets='php ezpublish/console assets:install --relative --symlink web'
+alias fosjsdump='php ezpublish/console fos:js-routing:dump'
 alias dumpassets='php ezpublish/console assetic:dump'
-alias indexsolrez5='php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php'
+
+#bash function to run solr indexation with ezfind. 1st parameter must be admin siteaccess
+alias indexsolrez5='function _indexsolr() {
+php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php --siteaccess=$1;
+};_indexsolr'
 
 # smart eZ4 cache clear function
 function ez4cacheclear()

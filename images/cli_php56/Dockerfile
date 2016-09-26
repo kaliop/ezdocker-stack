@@ -1,5 +1,8 @@
-FROM ez_php
+FROM klabs/php56
 MAINTAINER Kaliop
+
+LABEL php.version=5.6 \
+      application.type=ezpublish
 
 ARG DOCKER_TIMEZONE=Europe/Paris
 ARG DOCKER_LOCALE=fr_FR.UTF-8
@@ -46,7 +49,6 @@ ENV LANGUAGE $DOCKER_LOCALE
 ADD profile /tmp/profile
 
 # nb: the 1013 used here for user id and group id is later on replaced by the code in bootstrap.sh...
-# q: why not use useradd and groupadd commands which can do more in one line?
 RUN addgroup --gid 1013 site && \
     adduser --system --uid=1013 --gid=1013 \
         --home /home/site --shell /bin/bash site && \
@@ -77,14 +79,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     mkdir -p /home/site/.composer && \
     chown -R site:site /home/site/.composer
 
-
-# NodeJS / bower / grunt => not installed for now as customers do not want to install it on production env
-# -----------------------------------------------------------------------------
-#RUN apt-get update && \
-#    apt-get install -y \
-#    npm && \
-#    ln -s /usr/bin/nodejs /usr/bin/node && \
-#    npm install -g bower grunt-cli
 
 # -----------------------------------------------------------------------------
 
