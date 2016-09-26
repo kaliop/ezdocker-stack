@@ -4,7 +4,7 @@ This is the main web server image for the project. The source code for the eZ Pu
 
 Unlike the other images, there is more than one software package installed here as they are necessary for the running of eZ Publish.
 
-Container is built on Debian Jessie
+Image is built on Debian Jessie.
 
 The software packages installed are:
 
