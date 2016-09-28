@@ -1,12 +1,13 @@
 eZ Publish Web Development Environment
 ============================================================
 
-This repository contains all the Docker images and build files needed to create and use an eZ Publish Development Environment.
+This repository provides a Docker stack management script and docker-compose.yml templates needed to create and use an eZ Publish Development Environment.
 
 It is to be used in conjunction with another repository which will contain the Application source code.
 The Application source code can be installed in the 'site' directory within the Development Environment root directory, 
 or in your local main projects directory (~/www for example) 
 
+All Docker images used in this stack are published on Docker hub, in klabs repository.
 
 ## System Requirements
 
@@ -39,10 +40,10 @@ on the UAT and Production environments.
 
 Each container image has a Readme file describing it in detail, in the same folder as the image:
 
-* [web](images/web/Readme.md)
-* [phpcli](images/cli/Readme.md)
-* [solr](images/solr/Readme.md)
-* [varnish](images/cli/Readme.md)
+* [apache](images/apache_php56/Readme.md)
+* [phpcli](images/cli_php56/Readme.md)
+* [solr](images/solr4/Readme.md)
+* [varnish](images/varnish/Readme.md)
 * [memcached](images/memcached/Readme.md)
 * [mysql](images/mysql/Readme.md)
 * [haproxy](images/haproxy/Readme.md)
@@ -57,6 +58,16 @@ The following data are stored on the host machine (and mounted as volumes in the
 *NB:* if you have never used Docker before, getting a basic knowledge of the commands used to start/stop/attach-to containers
 might be a good idea.
 There are plenty of tutorials available on the internet. This is a good quickstart: https://docs.docker.com/engine/userguide/basics/
+
+
+The apache container provides multiple virtual hosts attached to specific domain name patterns : 
+
+* ez5 virtual host (*.ezdev) : used for eZ Publish 5 projects
+* ezplatform virtual host (*.ez6) : used for eZ Platform projects
+* ez4 virtual host (*.ez4): used for eZ Publish 4 (legacy) projects
+
+These virtual hosts are located in the config/apache/sites-available folders and mounted as volumes in the apache container, in docker-compose.yml.
+You can therefore change these virtual hosts to suit your project's need.
 
 
 ## Setting up the Environment (for 1st time execution)
@@ -96,7 +107,7 @@ There are plenty of tutorials available on the internet. This is a good quicksta
     which is stored in another repository and will have to be installed separately once the environment is configured, 
     and some docker images which are also stored in other repositories and imported as git sub modules. 
 
-    To get the required files onto the host machine simply clone this repo into a local folder and install sub modules:
+    To get the required files onto the host machine simply clone this repo into a local folder :
 
         git clone ssh://git@github.com:kaliop/ezdocker-stack.git
         cd /path/to/your/docker/folder/ezdocker-stack
@@ -126,7 +137,7 @@ There are plenty of tutorials available on the internet. This is a good quicksta
         find ./config -type d -exec chmod 777 {} \; && find ./data -type d -exec chmod 777 {} \; && find ./logs -type d -exec chmod 777 {} \;
 
 
-6. Launch the stack script and build the Environment Images
+6. Launch the stack script and configure your stack
 
 	The docker stack provides a shell script to manage your project's docker-compose file.
 	The script is interactive and will ask you a few questions to configure your project the first time you run it.
@@ -135,31 +146,19 @@ There are plenty of tutorials available on the internet. This is a good quicksta
 	Here are the information you will need to enter in your console to configure your project : 
 	
 	* Your project name
+    * Is this stack used for backend or frontend development (lighter stack) ?
 	* Will the docker stack be used for only one project (ez instance will be cloned in site folder)
 	or for many projects already present on your computer ?
 	* If the stack is a mono project stack, the Git url of your project.
 	* If this is a multi projects stack, the root path of your projects (usually /home/user/www)
 	* The local path of your main project storage (usually this will be a folder located on the workspace)
-	* The mount point of your main project storage inside the web & cli containers
-	* Your current timezone & locale
+	* Your current timezone
 	* Your main project Varnish VCL file
 	* Your solr configuration folder if you need a specific configuration for your project
 	* The PHP Version you wish to use (5.4 or 5.6)
 	
-	To build all images, launch the script with the 'build' argument : 
-	
-		./stack.sh build
-
-    Note: if you ever want to rebuild the whole platform *from scratch*, making sure that there are no cached container
-    images involved, the command to use is: `docker-compose build --force-rm --no-cache`.
-
-    Note: if there are error messages during the build about ubuntu repositories not being accessible or other network
-    related errors, and the host is an Ubuntu machine, take a look at this page:
-    http://serverfault.com/questions/642981/docker-containers-cant-resolve-dns-on-ubuntu-14-04-desktop-host
-
-    Note: if the build gets stuck while installing java in the solr container, take a look at:
-    https://github.com/docker/docker/issues/18180.
-    If you are running in virtualbox, setting your vcpu count to 2 might fix the problem...
+	The ezdocker stack uses Docker images from [klabs Docker Hub Repository](https://hub.docker.com/u/klabs/)
+    These images will be downloaded the first time you start the stack, and will be updated if needed each time you start the stack.
 
 
 7. Set up the Application
@@ -193,13 +192,7 @@ To pull in the latest changes and restart all the containers, just run:
     ./stack.sh update
 
 *NB:* this will apply any changes coming from the git repository which contains the definition of the stack, but it
-will not update the base Docker images in use. If the base images have been updated, because of eg. known security
-vulnerabilities, it is recommended to rebuild all the containers by stopping them and the running:
-
-    docker-compose build --pull
-
-Note that this might take a while and need a lot of disk space. Remove unused container images to free some space.
-
+will not update the base Docker images in use. 
 
 ## Changing the environment configuration
 
@@ -244,7 +237,7 @@ Solr admin interface can be accessed either through port 8983, i.e http://localh
 
 ## Stopping the Environment
 
-    ./stack.sh stop
+    ./stack.sh down
     
 ## Deleting all containers
 
@@ -267,7 +260,7 @@ The cli and web containers run php 5.6 as default version. If you need to switch
 
     ./stack.sh php_switch
 
-This will remove web & cli images and rebuild the ez_php5 image with the chosen php version (5.4 or 5.6), which is the source image for cli & web images. 
+This will use klabs cli_php54 and apache_php54 images for cli & web containers.
 
 
 ## Extras
@@ -315,20 +308,6 @@ from your hard disk. To check it out, just run `docker images`...
 
 The best tool we found so far to really clean up leftover image layers is: https://github.com/spotify/docker-gc
 
-### Building individual images
-
-From time to time you may need to rebuild an individual image because there has been an update to the image definition.
-
-First make sure to pull the latest version of the repository. Navigate into the project folder and run a git pull.
-
-    git pull origin master
-
-To rebuild a specific image simply run docker-compose using the image 'service name', e.g.
-
-    docker-compose cli
-
-Note: the phpmyadmin and dockerui images do not need a rebuild build phase. It you remove them (see chapter above), and
-run the `stack.php run` command, they will be re-pulled automatically then executed.
 
 ### MySQL
 
