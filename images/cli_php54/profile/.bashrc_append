@@ -21,6 +21,9 @@ alias indexsolrez5='function _indexsolr() {
 php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php --siteaccess=$1;
 };_indexsolr'
 
+#bash alias for composer to run composer without memory_limit
+alias composer='php -d memory_limit=-1 /usr/local/bin/composer'
+
 # smart eZ4 cache clear function
 function ez4cacheclear()
 {
