@@ -10,9 +10,6 @@
     <h2>eZPublish web server</h2>
     <ul>
         <li><a href="/phpinfo.php">PHP Info</a></li>
-        <li><a href="/ocp.php">PHP Opcache Info</a></li>
-        <li><a href="/server-status">Apache Server Status</a></li>
-        <li><a href="/server-info">Apache Server Info</a></li>
     </ul>
 
     <h2>Other servers</h2>
