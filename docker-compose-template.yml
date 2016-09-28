@@ -9,11 +9,7 @@
 version: '2'
 services:
     web:
-        build:
-           context: images/web
-           args:
-              DOCKER_TIMEZONE: ${DOCKER_TIMEZONE}
-              DOCKER_LOCALE: ${DOCKER_LOCALE}
+        image: klabs/apache_${DOCKER_PHP_VERSION}
         hostname: ${DOCKER_PROJECT_NAME}_web
         container_name: web
         ports:
@@ -34,11 +30,7 @@ services:
             - SYS_PTRACE
 
     cli:
-        build:
-           context: images/cli
-           args:
-              DOCKER_TIMEZONE: ${DOCKER_TIMEZONE}
-              DOCKER_LOCALE: ${DOCKER_LOCALE}
+        image: klabs/cli_${DOCKER_PHP_VERSION}
         hostname: ${DOCKER_PROJECT_NAME}_cli
         container_name: cli
         privileged: true
@@ -62,10 +54,7 @@ services:
             - SYS_PTRACE
 
     memcached:
-        build:
-           context: images/memcached
-           args:
-              DOCKER_TIMEZONE: ${DOCKER_TIMEZONE}
+        image: klabs/memcached
         hostname:  ${DOCKER_PROJECT_NAME}_memcached
         container_name: memcached
         ports:
@@ -79,10 +68,7 @@ services:
             - SYS_PTRACE
 
     solr:
-        build:
-           context: images/solr
-           args:
-              DOCKER_TIMEZONE: ${DOCKER_TIMEZONE}
+        image: klabs/solr4
         hostname: ${DOCKER_PROJECT_NAME}_solr
         container_name: solr
         ports:
@@ -98,10 +84,7 @@ services:
             - SYS_PTRACE
 
     varnish:
-        build:
-           context: images/varnish
-           args:
-              DOCKER_TIMEZONE: ${DOCKER_TIMEZONE}
+        image: klabs/varnish
         hostname: ${DOCKER_PROJECT_NAME}_varnish
         container_name: varnish
         ports:
@@ -122,8 +105,7 @@ services:
            - web
 
     haproxy:
-        build:
-           context: images/haproxy
+        image: klabs/haproxy
         hostname: ${DOCKER_PROJECT_NAME}_haproxy
         container_name: haproxy
         ports:
@@ -139,10 +121,7 @@ services:
            - solr
 
     mysql:
-        build:
-           context: images/mysql
-           args:
-              DOCKER_TIMEZONE: ${DOCKER_TIMEZONE}
+        image: klabs/mysql
         hostname: ${DOCKER_PROJECT_NAME}_mysql
         container_name: mysql
         # nb: this prevents the image to start on some ubuntu installs because of apparmor config...
