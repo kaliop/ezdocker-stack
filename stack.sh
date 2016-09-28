@@ -123,17 +123,10 @@ buildDockerComposeConfigFileIfNeeded() {
         fi
 
         # Ask for storage mountpoints
-        read -p "Enter your project ez storage path on host (Ex: /home/user/project-ezpublish/var/project/storage/ ) : " storage_local_path
+        read -p "Enter path to your ezpublish storages on host (default : /mnt/\$USER/ ) : " storage_local_path
+        storage_local_path=${storage_local_path:-/mnt/\$USER/}
 
-        if [ ! -d "$storage_local_path" ]; then
-        	echo "Directory $storage_local_path does not exist ! Aborting ..."
-        	exit ;
-        fi
-
-
-        read -p "Enter your project storage mount point in container (/mnt/storage/) : " storage_mount_point
-        storage_mount_point=${storage_mount_point:-/mnt/storage/}
-
+        echo "Your local storage folder will be mounted in /mnt/$USER inside containers"
         echo "(Don't forget to symlink your storage in your ez5 instance after 1st run)"
 
         # Ask for timezone for docker args (needs docker-compsoe v2 format)
@@ -160,7 +153,7 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "export DOCKER_VARNISH_VCL_FILE=$vcl_filepath" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_SOLR_CONF_PATH=$solr_conf_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_LOCAL_PATH=$storage_local_path" >> $DOCKER_COMPOSE_CONFIG_FILE
-        echo "export DOCKER_STORAGE_MOUNT_POINT=$storage_mount_point" >> $DOCKER_COMPOSE_CONFIG_FILE
+        echo "export DOCKER_STORAGE_MOUNT_POINT=/mnt/\$USER/" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_TIMEZONE=$timezone" >> $DOCKER_COMPOSE_CONFIG_FILE
 
         #Configure PHP version
