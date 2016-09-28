@@ -16,7 +16,7 @@ You can run the container with the docker run command :
 
 
   ``` sh
-    docker run klabs/haproxy
+    docker run klabs/varnish
     ```
 
  But is is strongly recommended to use docker-compose with the stack.sh script provided in [ezdocker-stack](https://github.com/kaliop/ezdocker-stack/) repository.
