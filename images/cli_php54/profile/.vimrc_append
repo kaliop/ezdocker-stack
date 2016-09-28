@@ -1,0 +1,32 @@
+
+" Display line and column number at bottom of buffer
+set ruler
+
+" turn syntax highlighting on by default
+syntax on
+
+" set our tabs to four spaces
+set ts=4
+
+" spaces to indent when using TAB
+set sw=4
+
+" Insert spaces when TAB is pressed
+set expandtab
+
+" set auto-indenting on for programming
+filetype indent on
+set ai
+set smartindent
+
+" highlight words when searching for them.
+set hlsearch
+
+" automatically show matching brackets. works like it does in bbedit.
+set showmatch
+
+" make that backspace key work the way it should
+set backspace=indent,eol,start
+
+" Don't break words in middle
+set linebreak
