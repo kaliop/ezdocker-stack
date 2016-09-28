@@ -1,0 +1,85 @@
+### Notes
+#
+# - using the 'build' config instead of 'image' allows to build the platform with just 'docker-compose build'
+# - SYS_PTRACE capability is needed to allow tghe containers to read /proc/$PID, which is needed by init scripts
+#
+# The docker-compose 'service' name corresponds to the top-level yml keys, whereas the container name is used in most
+# 'docker' commands.
+# Keeping a separate container name for each project allows to run many container platforms in parallel
+version: '2'
+services:
+    web:
+        image: klabs/apache_${DOCKER_PHP_VERSION}
+        hostname: ${DOCKER_PROJECT_NAME}_web
+        container_name: web
+        ports:
+            - "82:82"
+            - "88:88"
+            - "80:80"
+        volumes:
+            - ./config/web/sites-available/001-dynamic-vhost.conf:/etc/apache2/sites-available/001-dynamic-vhost.conf
+            - ./config/web/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
+            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
+            - ./logs/apache/:/var/log/apache2
+            - ./config/web/php5/custom_vars.ini:/etc/php5/apache2/conf.d/custom_vars.ini
+            - ./config/web/php5/timezone.ini:/etc/php5/apache2/conf.d/timezone.ini
+            - "$DOCKER_STORAGE_LOCAL_PATH:$DOCKER_STORAGE_MOUNT_POINT"
+        env_file:
+            - docker-compose.env
+            - docker-compose.env.local
+        cap_add:
+            - SYS_PTRACE
+
+    cli:
+        image: klabs/cli_${DOCKER_PHP_VERSION}
+        hostname: ${DOCKER_PROJECT_NAME}_cli
+        container_name: cli
+        privileged: true
+        volumes:
+            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
+            - ./logs/cli:/var/log/php
+            - ./config/cli/php5/custom_vars.ini:/etc/php5/cli/conf.d/custom_vars.ini
+            - ./config/cli/php5/timezone.ini:/etc/php5/cli/conf.d/timezone.ini
+            # files in /tmp/cron.d get managed by bootstrap.sh
+            - ./config/cli/cron.d:/tmp/cron.d
+            - ~/.gitconfig:/home/site/.gitconfig
+            - ~/.ssh/config:/home/site/.ssh/config
+            - "$SSH_AUTH_SOCK:/ssh-agent"
+            - "$DOCKER_STORAGE_LOCAL_PATH:$DOCKER_STORAGE_MOUNT_POINT"
+        environment:
+            - SSH_AUTH_SOCK=/ssh-agent
+        env_file:
+            - docker-compose.env
+            - docker-compose.env.local
+        cap_add:
+            - SYS_PTRACE
+
+    memcached:
+        image: klabs/memcached
+        hostname:  ${DOCKER_PROJECT_NAME}_memcached
+        container_name: memcached
+        ports:
+            - "11211:11211"
+        volumes:
+            - ./logs/memcache/:/var/log/memcache
+        env_file:
+            - docker-compose.env
+            - docker-compose.env.local
+        cap_add:
+            - SYS_PTRACE
+
+    solr:
+        image: klabs/solr4
+        hostname: ${DOCKER_PROJECT_NAME}_solr
+        container_name: solr
+        ports:
+            - "8983:8983"
+        volumes:
+            - "${DOCKER_SOLR_CONF_PATH}:/opt/solr/solr/"
+            - ./data/solr/:/opt/solr/solr/ezp-default/data
+            - ./logs/solr/:/opt/solr/logs
+        env_file:
+            - docker-compose.env
+            - docker-compose.env.local
+        cap_add:
+            - SYS_PTRACE

@@ -19,8 +19,18 @@ usage() {
 buildDockerComposeFile() {
     if [ ! -f "$DOCKER_COMPOSE_FILE" ]; then
 
-        echo "No DOCKER_COMPOSE_FILE file found, generating one from template..."
-        cp docker-compose-template.yml "$DOCKER_COMPOSE_FILE"
+        #choose which template should be used for project
+        read -p "What kind of stack do you want to use ? (possible values are : dev, frontend - default: dev) " docker_compose_template_type
+        docker_compose_template_type=${docker_compose_template_type:-dev}
+        template_file="docker-compose-$docker_compose_template_type-template.yml"
+
+        if [ ! -f "$template_file" ]; then
+            echo "ERROR ! wrong template file specified : aborting ..."
+            exit 1;
+        fi
+
+        echo "No DOCKER_COMPOSE_FILE file found, generating one from template: $template_file"
+        cp "$template_file" "$DOCKER_COMPOSE_FILE"
     fi
 }
 
@@ -37,34 +47,19 @@ buildDockerComposeLocalEnvFileIfNeeded() {
     fi
 }
 
-buildDockerPhpImage() {
 
+configurePhpVersion() {
     read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 or 5.6 - default: 5.6) " php_version
     php_version=${php_version:-5.6}
+    php_version='php'${php_version/./}
 
-    echo "Deleting web and cli images"
-
-    docker images | awk '{print $1,$3}' | grep $DOCKER_PROJECT_NAME"_web" | awk '{print $2}' | xargs -I {} docker rmi --force {}
-    docker images | awk '{print $1,$3}' | grep $DOCKER_PROJECT_NAME"_cli" | awk '{print $2}' | xargs -I {} docker rmi --force {}
-    docker images | awk '{print $1,$3}' | grep "ez_php" | awk '{print $2}' | xargs -I {} docker rmi --force {}
-
-    echo "Building ez_php image with PHP version $php_version"
-    case "$php_version" in
-
-        5.4)
-            docker build -f images/php54/Dockerfile -t ez_php --rm --force-rm .
-        ;;
-
-        5.6)
-            docker build -f images/php56/Dockerfile -t ez_php --rm --force-rm .
-        ;;
-
-    esac
-
-    read -p "PHP image succesfully built ? (y/n) " build_success
-    if [ ! $build_success == 'y' ]; then
-        exit ;
+    #echo 'php version : '$php_version
+    if grep -q DOCKER_PHP_VERSION "$DOCKER_COMPOSE_CONFIG_FILE"; then
+     sed -i '/DOCKER_PHP_VERSION/c\export DOCKER_PHP_VERSION='$php_version "$DOCKER_COMPOSE_CONFIG_FILE" ;
+    else
+     echo "export DOCKER_PHP_VERSION=$php_version" >> $DOCKER_COMPOSE_CONFIG_FILE
     fi
+
 }
 
 # Check if some files mounted as volumes exist, and create them if they are not found
@@ -149,10 +144,6 @@ buildDockerComposeConfigFileIfNeeded() {
         echo -e "[Date]\ndate.timezone=$timezone" > config/cli/php5/timezone.ini
         echo -e "[Date]\ndate.timezone=$timezone" > config/web/php5/timezone.ini
 
-		# Ask for locale for docker args (needs docker-compsoe v2 format)
-        read -p "Enter your current locale (default: fr_FR.UTF-8) : " locale
-        locale=${locale:-fr_FR.UTF-8}
-
         # Ask for custom vcl file path
         read -p "Enter path to Varnish vcl file (default: ./config/varnish/ez54.vcl) : " vcl_filepath
         vcl_filepath=${vcl_filepath:-./config/varnish/ez54.vcl}
@@ -160,9 +151,6 @@ buildDockerComposeConfigFileIfNeeded() {
         # Ask for custom solr conf folder path
         read -p "Enter path to solr configuration folder (default: ./config/solr) : " solr_conf_path
         solr_conf_path=${solr_conf_path:-./config/solr}
-
-        #Ash for PHP version
-        buildDockerPhpImage
 
         # Save all env vars in a file that will be included at every call
         echo "# in this file we define all env variables used by docker-compose.yml" > $DOCKER_COMPOSE_CONFIG_FILE
@@ -174,7 +162,9 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "export DOCKER_STORAGE_LOCAL_PATH=$storage_local_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_MOUNT_POINT=$storage_mount_point" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_TIMEZONE=$timezone" >> $DOCKER_COMPOSE_CONFIG_FILE
-        echo "export DOCKER_LOCALE=$locale" >> $DOCKER_COMPOSE_CONFIG_FILE
+
+        #Configure PHP version
+        configurePhpVersion
     fi
 }
 
@@ -201,16 +191,13 @@ source $DOCKER_COMPOSE_CONFIG_FILE
 
 #echo "Using existing $DOCKER_COMPOSE_FILE and $DOCKER_COMPOSE_CONFIG_FILE configuration"
 
+#Always pull latest images from Docker hub
+
 case "$1" in
-
-    # @todo shall we escape $DOCKER_COMPOSE for security ?
-
-    build)
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" build
-        ;;
 
     start|run)
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
+        $DOCKER_COMPOSE pull
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
@@ -223,10 +210,10 @@ case "$1" in
 		;;
 
     php_switch)
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" stop
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" rm --force
-        buildDockerPhpImage
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" build
+        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
+        configurePhpVersion
+        $DOCKER_COMPOSE pull
+        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
 	reset)
@@ -242,7 +229,6 @@ case "$1" in
     update)
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
         update
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" build
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
