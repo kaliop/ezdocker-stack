@@ -46,6 +46,10 @@ if [ -f "/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf" ] && [ 
     a2ensite 002-dynamic-vhost-ezplatform.conf
 fi
 
+#Load ez4 dynamic vhost if found
+if [ -f "/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf" ];then
+    a2ensite 003-dynamic-vhost-ez4.conf
+fi
 
 trap clean_up SIGTERM
 

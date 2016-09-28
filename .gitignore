@@ -7,7 +7,7 @@
 /docker-compose.config.sh
 
 /config/cli/php5/timezone.ini
-/config/web/php5/timezone.ini
+/config/apache/php5/timezone.ini
 
 /data/mysql/*
 /data/solr/*
