@@ -1,28 +1,25 @@
-Varnish 4 Container
-===================
+Varnish 4 Docker image
+=====================
 
-This container (based on Debian 8) runs Varnish 4.0.3 on port 81.  
+This image (based on Debian 8) runs Varnish 4.0.3 on port 81.  
 varnishncsa and varnish-agent are also installed in the container.  
 The default vcl used in this container is the one provided by ezsystems for eZ Publish 5.4.
 
 
-How to build & run the container
+How to run the container
 --------------------------------
 
-* Check out this repository in a directory somewhere, and execute commands within it 
 * If you are working behind a corporate http proxy, run [the klabs/forgetproxy container](https://registry.hub.docker.com/u/klabs/forgetproxy/)
-* Build the image
+* Run the container
+
+You can run the container with the docker run command :
 
 
-``` sh
-docker build -t kaliop/varnish4 .
-```
+  ``` sh
+    docker run klabs/haproxy
+    ```
 
-If the build fails when fetching APT repositories/packages , try to build the image without cache :
-    
-``` sh
-docker build --no-cache -t kaliop/varnish4 .
-```
+ But is is strongly recommended to use docker-compose with the stack.sh script provided in [ezdocker-stack](https://github.com/kaliop/ezdocker-stack/) repository.
 
 ## How to use docker-compose to run container
 
@@ -36,7 +33,7 @@ chmod +x ~/bin/docker-compose
 Then run the container with the following command : 
 
 ``` sh
-docker-compose -p kaliop up -d
+docker-compose up -d
 ``` 
 
 If you wish to add more options to docker compose, you will have to create your own project.yml file which will extend the one present in this repository.  
