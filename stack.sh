@@ -135,7 +135,7 @@ buildDockerComposeConfigFileIfNeeded() {
 
         echo "Configuring timezone for php ..."
         echo -e "[Date]\ndate.timezone=$timezone" > config/cli/php5/timezone.ini
-        echo -e "[Date]\ndate.timezone=$timezone" > config/web/php5/timezone.ini
+        echo -e "[Date]\ndate.timezone=$timezone" > config/apache/php5/timezone.ini
 
         # Ask for custom vcl file path
         read -p "Enter path to Varnish vcl file (default: ./config/varnish/ez54.vcl) : " vcl_filepath
