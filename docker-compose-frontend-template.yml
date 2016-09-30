@@ -19,7 +19,7 @@ services:
         volumes:
             - ./config/apache/sites-available/001-dynamic-vhost-ez5.conf:/etc/apache2/sites-available/001-dynamic-vhost-ez5.conf
             - ./config/web/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
-            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
+            - "$DOCKER_WWW_ROOT:/var/www"
             - ./logs/apache/:/var/log/apache2
             - ./config/apache/php5/custom_vars.ini:/etc/php5/apache2/conf.d/custom_vars.ini
             - ./config/apache/php5/timezone.ini:/etc/php5/apache2/conf.d/timezone.ini
@@ -36,7 +36,7 @@ services:
         container_name: cli
         privileged: true
         volumes:
-            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
+            - "$DOCKER_WWW_ROOT:/var/www"
             - ./logs/cli:/var/log/php
             - ./config/cli/php5/custom_vars.ini:/etc/php5/cli/conf.d/custom_vars.ini
             - ./config/cli/php5/timezone.ini:/etc/php5/cli/conf.d/timezone.ini
