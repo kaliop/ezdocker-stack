@@ -17,10 +17,10 @@ services:
             - "88:88"
         volumes:
             - ./config/apache/sites-available/001-dynamic-vhost-ez5.conf:/etc/apache2/sites-available/001-dynamic-vhost-ez5.conf
-            - ./config/web/sites-available/002-dynamic-vhost-ezplatform.conf:/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf
-            - ./config/web/sites-available/003-dynamic-vhost-ez4.conf:/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf
-            - ./config/web/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
-            - ./config/web/sites-available/ezplatform-common.conf:/etc/apache2/sites-available/ezplatform-common.conf
+            - ./config/apache/sites-available/002-dynamic-vhost-ezplatform.conf:/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf
+            - ./config/apache/sites-available/003-dynamic-vhost-ez4.conf:/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf
+            - ./config/apache/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
+            - ./config/apache/sites-available/ezplatform-common.conf:/etc/apache2/sites-available/ezplatform-common.conf
             - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - ./logs/apache/:/var/log/apache2
             - ./config/apache/php5/custom_vars.ini:/etc/php5/apache2/conf.d/custom_vars.ini
