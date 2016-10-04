@@ -77,12 +77,17 @@ RUN a2enmod rewrite headers vhost_alias proxy_http proxy ssl info status
 
 # vhost config
 # controlpanel is burned into the container, while the sites-enabled dir is mounted as volume
-COPY apache2/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY apache2/010-default.conf /etc/apache2/sites-available/010-default.conf
 COPY apache2/010-controlpanel.conf /tmp/010-controlpanel.conf
 RUN cat /tmp/010-controlpanel.conf >> /etc/apache2/apache2.conf
 RUN rm /tmp/010-controlpanel.conf
 
-RUN a2ensite 000-default.conf
+# Disable default apache vhost
+RUN a2dissite 000-default
+
+# Enable custom default vhost
+RUN a2ensite 010-default.conf
+
 
 COPY sites/controlpanel/ /home/site/controlpanel/
 
