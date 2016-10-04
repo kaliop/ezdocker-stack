@@ -106,6 +106,7 @@ services:
           - apparmor:unconfined
         depends_on:
            - web
+           - cli
 
     haproxy:
         image: klabs/haproxy
