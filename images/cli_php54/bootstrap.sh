@@ -4,6 +4,16 @@
 
 echo [`date`] Bootstrapping the CLI server...
 
+# Composer config
+if [ "$GITHUB_OAUTH" ]; then
+	echo Bootstraping composer github config
+	echo '{ "config": { "github-oauth": { "github.com": "'$GITHUB_OAUTH'" } } }' > /home/site/.composer/config.json
+fi
+
+if [ "$COMPOSER_HTTP_AUTH_DOMAIN" ] && [ "$COMPOSER_HTTP_AUTH_LOGIN" ] && [ "$COMPOSER_HTTP_AUTH_PASSWORD" ]; then
+	echo Bootstraping composer http-basic auth config
+	echo '{ "http-basic": { "'$COMPOSER_HTTP_AUTH_DOMAIN'": { "username": "'$COMPOSER_HTTP_AUTH_LOGIN'", "password": "'$COMPOSER_HTTP_AUTH_PASSWORD'" } } }' > /home/site/.composer/auth.json
+fi
 
 # Fix UID & GID for user 'site'
 

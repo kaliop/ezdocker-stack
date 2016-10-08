@@ -279,6 +279,22 @@ Note: do *not* use `docker run` to attach to an existing container, as that will
 
 Note: to connect to the web or cli containers, use `su site` instead of `bash`
 
+### Configuring composer for cli container
+
+The cli container startup script will look for environment variables in order to setup composer.
+It is therefore possible to add :
+
+* Your own github oauth key (to avoid github rate limit)
+* Credentials for http-basic auth needed form some vendors (updates.ez.no for example)
+
+To do so, just add the followng variables in your docker-compose.env.local file : 
+
+* GITHUB_OAUTH=xxxxxxxxxxxxxxxxx
+* COMPOSER_HTTP_AUTH_DOMAIN=updates.ez.no # For example
+* COMPOSER_HTTP_AUTH_LOGIN=xxxxxxxxxx
+* COMPOSER_HTTP_AUTH_PASSWORD=xxxxxxxxxxxxx
+
+
 ### Checking the status of all existing containers (not only the active ones)
 
     docker ps -a
