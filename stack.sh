@@ -49,7 +49,7 @@ buildDockerComposeLocalEnvFileIfNeeded() {
 
 
 configurePhpVersion() {
-    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 or 5.6 - default: 5.6) " php_version
+    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 , 5.6 or 7 - default: 5.6) " php_version
     php_version=${php_version:-5.6}
     php_version='php'${php_version/./}
 
@@ -60,6 +60,7 @@ configurePhpVersion() {
      echo "export DOCKER_PHP_VERSION=$php_version" >> $DOCKER_COMPOSE_CONFIG_FILE
     fi
 
+    source $DOCKER_COMPOSE_CONFIG_FILE
 }
 
 # Check if some files mounted as volumes exist, and create them if they are not found
