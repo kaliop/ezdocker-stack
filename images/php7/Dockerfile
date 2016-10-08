@@ -35,6 +35,12 @@ RUN apt-get update && \
 
 # -----------------------------------------------------------------------------
 
+# PHP config
+# -----------------------------------------------------------------------------
+# remove default xdebug config
+RUN rm /etc/php/7.0/apache2/conf.d/20-xdebug.ini
+RUN rm /etc/php/7.0/cli/conf.d/20-xdebug.ini
+
 # Clear archives in apt cache folder
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
