@@ -1,0 +1,11 @@
+[push]
+        default = matching
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        interactive = auto
+[core]
+        filemode = false
+[alias]
+        st = status
