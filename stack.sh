@@ -51,13 +51,33 @@ buildDockerComposeLocalEnvFileIfNeeded() {
 configurePhpVersion() {
     read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 , 5.6 or 7 - default: 5.6) " php_version
     php_version=${php_version:-5.6}
-    php_version='php'${php_version/./}
 
-    #echo 'php version : '$php_version
+    php_available_versions=(5.4 5.6 7)
+
+    if [[ ! " ${php_available_versions[@]} " =~ " ${php_version} " ]]; then
+        echo "ERROR ! unsupported php version: aborting ..."
+        exit 1;
+    fi
+
+    # Register php version Docker env variable
+    php_version='php'${php_version/./}
     if grep -q DOCKER_PHP_VERSION "$DOCKER_COMPOSE_CONFIG_FILE"; then
      sed -i '/DOCKER_PHP_VERSION/c\export DOCKER_PHP_VERSION='$php_version "$DOCKER_COMPOSE_CONFIG_FILE" ;
     else
      echo "export DOCKER_PHP_VERSION=$php_version" >> $DOCKER_COMPOSE_CONFIG_FILE
+    fi
+
+   # Register php config path Docker env variable
+   if [[ "$php_version" == 'php7' ]]; then
+        php_config_path="/etc/php/7.0"
+   else
+        php_config_path="/etc/php5"
+   fi
+
+   if grep -q DOCKER_PHP_CONF_PATH "$DOCKER_COMPOSE_CONFIG_FILE"; then
+     sed -i '/DOCKER_PHP_CONF_PATH/c\export DOCKER_PHP_CONF_PATH='$php_config_path "$DOCKER_COMPOSE_CONFIG_FILE" ;
+    else
+     echo "export DOCKER_PHP_CONF_PATH=$php_config_path" >> $DOCKER_COMPOSE_CONFIG_FILE
     fi
 
     source $DOCKER_COMPOSE_CONFIG_FILE

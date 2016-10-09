@@ -21,10 +21,10 @@ services:
             - ./config/apache/sites-available/003-dynamic-vhost-ez4.conf:/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf
             - ./config/apache/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
             - ./config/apache/sites-available/ezplatform-common.conf:/etc/apache2/sites-available/ezplatform-common.conf
-            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - ./logs/apache/:/var/log/apache2
-            - ./config/apache/php5/custom_vars.ini:/etc/php5/apache2/conf.d/custom_vars.ini
-            - ./config/apache/php5/timezone.ini:/etc/php5/apache2/conf.d/timezone.ini
+            - "./config/apache/php5/custom_vars.ini:$DOCKER_PHP_CONF_PATH/apache2/conf.d/custom_vars.ini"
+            - "./config/apache/php5/timezone.ini:$DOCKER_PHP_CONF_PATH/apache2/conf.d/timezone.ini"
+            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - "$DOCKER_STORAGE_LOCAL_PATH:$DOCKER_STORAGE_MOUNT_POINT"
         env_file:
             - docker-compose.env
@@ -38,15 +38,15 @@ services:
         container_name: cli
         privileged: true
         volumes:
-            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - ./logs/cli:/var/log/php
-            - ./config/cli/php5/custom_vars.ini:/etc/php5/cli/conf.d/custom_vars.ini
-            - ./config/cli/php5/timezone.ini:/etc/php5/cli/conf.d/timezone.ini
             # files in /tmp/cron.d get managed by bootstrap.sh
             - ./config/cli/cron.d:/tmp/cron.d
             - ~/.gitconfig:/home/site/.gitconfig
             - ~/.ssh/config:/home/site/.ssh/config
             - "$SSH_AUTH_SOCK:/ssh-agent"
+            - "./config/cli/php5/custom_vars.ini:$DOCKER_PHP_CONF_PATH/cli/conf.d/custom_vars.ini"
+            - "./config/cli/php5/timezone.ini:$DOCKER_PHP_CONF_PATH/cli/conf.d/timezone.ini"
+            - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - "$DOCKER_STORAGE_LOCAL_PATH:$DOCKER_STORAGE_MOUNT_POINT"
         environment:
             - SSH_AUTH_SOCK=/ssh-agent
