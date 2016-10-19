@@ -16,20 +16,23 @@
  limitations under the License.
 -->
 
-<!--
- All (relative) paths are relative to the installation path
+<!-- If this file is found in the config directory, it will only be
+     loaded once at startup.  If it is found in Solr's data
+     directory, it will be re-loaded every commit.
 
-  persistent: Save changes made via the API to this file
-  sharedLib: path to a lib directory that will be shared across all cores
+   See http://wiki.apache.org/solr/QueryElevationComponent for more info
+
 -->
-<solr persistent="true">
-
-  <!--
-  adminPath: RequestHandler path to manage cores.
-    If 'null' (or absent), cores will not be manageable via request handler
-  -->
-  <cores adminPath="/admin/cores" defaultCoreName="ezp-default">
-    <core name="ezp-default" instanceDir="ezp-default" />
-    <core name="ezplatform" instanceDir="ezplatform" />
-  </cores>
-</solr>
+<elevate>
+ <query text="foo bar">
+  <doc id="1" />
+  <doc id="2" />
+  <doc id="3" />
+ </query>
+ 
+ <query text="ipod">
+   <doc id="MA147LL/A" />  <!-- put the actual ipod at the top -->
+   <doc id="IW-02" exclude="true" /> <!-- exclude this cable -->
+ </query>
+ 
+</elevate>

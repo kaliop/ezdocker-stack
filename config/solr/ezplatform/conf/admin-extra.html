@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -16,20 +15,10 @@
  limitations under the License.
 -->
 
-<!--
- All (relative) paths are relative to the installation path
+<!-- The content of this page will be statically included into the top-
+right box of the cores overview page. Uncomment this as an example to 
+see there the content will show up.
 
-  persistent: Save changes made via the API to this file
-  sharedLib: path to a lib directory that will be shared across all cores
+<img src="img/ico/construction.png"> This line will appear at the top-
+right box on collection1's Overview
 -->
-<solr persistent="true">
-
-  <!--
-  adminPath: RequestHandler path to manage cores.
-    If 'null' (or absent), cores will not be manageable via request handler
-  -->
-  <cores adminPath="/admin/cores" defaultCoreName="ezp-default">
-    <core name="ezp-default" instanceDir="ezp-default" />
-    <core name="ezplatform" instanceDir="ezplatform" />
-  </cores>
-</solr>
