@@ -29,7 +29,11 @@
     If 'null' (or absent), cores will not be manageable via request handler
   -->
   <cores adminPath="/admin/cores" defaultCoreName="ezp-default">
-    <core name="ezp-default" instanceDir="ezp-default" />
-    <core name="ezplatform" instanceDir="ezplatform" />
+    <core name="ezp-default" instanceDir="ezp-default">
+       <property name="dataDir" value="/opt/solr/data/ezp-default" />
+     </core>
+    <core name="ezplatform" instanceDir="ezplatform">
+       <property name="dataDir" value="/opt/solr/data/ezplatform" />
+    </core>
   </cores>
 </solr>

@@ -78,7 +78,7 @@ services:
             - "8983:8983"
         volumes:
             - "${DOCKER_SOLR_CONF_PATH}:/opt/solr/solr/"
-            - ./data/solr/:/opt/solr/solr/ezp-default/data
+            - ./data/solr/:/opt/solr/data/
             - ./logs/solr/:/opt/solr/logs
         env_file:
             - docker-compose.env
