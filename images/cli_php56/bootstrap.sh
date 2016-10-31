@@ -2,7 +2,15 @@
 
 # @todo use /bin/sh instead of /bin/bash
 
-echo [`date`] Bootstrapping the CLI server...
+echo [`date`] Bootstrapping the CLI container ...
+
+function clean_up {
+    # Perform program exit housekeeping
+    echo [`date`] Stopping the container...
+    exit
+}
+
+trap clean_up SIGTERM
 
 # Composer config
 if [ "$GITHUB_OAUTH" ]; then
