@@ -30,6 +30,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     nano \
     mysql-client \
     imagemagick \
+    jpegoptim \
     poppler-utils \
     openjdk-7-jre-headless;
 

@@ -23,6 +23,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     unzip \
     locales \
     imagemagick \
+    jpegoptim \
     poppler-utils \
     openjdk-7-jre-headless;
 
