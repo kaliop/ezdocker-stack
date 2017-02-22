@@ -340,6 +340,13 @@ If you want to change the database name (default is 'ezdev'), just create an env
 
 	MYSQL_DATABASE=mydbname
 
+Note: the defaults charset & collations for mysqld are set to utf8 in mysql container command option in docker-compose template.
+
+    command: ["/root/bootstrap.sh", "mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci"]
+
+You can  change this in your own docker-compose.yml if needed.
+
+
 ### Connecting to the database from the host machine
 
 Connecting to the db from the host machine is possible. Just remember that:  
