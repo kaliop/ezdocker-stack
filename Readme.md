@@ -109,7 +109,7 @@ You can therefore change these virtual hosts to suit your project's need.
 
     To get the required files onto the host machine simply clone this repo into a local folder :
 
-        git clone ssh://git@github.com:kaliop/ezdocker-stack.git
+        git clone https://github.com/kaliop/ezdocker-stack.git
         cd /path/to/your/docker/folder/ezdocker-stack
 
 
