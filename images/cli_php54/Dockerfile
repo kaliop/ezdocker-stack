@@ -15,7 +15,6 @@ RUN echo $DOCKER_TIMEZONE > /etc/timezone; dpkg-reconfigure -f noninteractive tz
 # Java (used for eg. eZTika indexing)
 # poppler-utils used for pdftotext binary (note that eztika is a much better option!)
 # Mysql client, useful for db dumps and such
-# @todo remove any unneeded ones (sudo, openssl?)
 # -----------------------------------------------------------------------------
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     curl \
@@ -47,7 +46,6 @@ ENV LANG $DOCKER_LOCALE
 ENV LANGUAGE $DOCKER_LOCALE
 
 # Local user
-# @todo simplify this as much as possible
 # -----------------------------------------------------------------------------
 ADD profile /tmp/profile
 
@@ -67,12 +65,6 @@ RUN addgroup --gid 1013 site && \
     cp /tmp/profile/.gitconfig /home/site/; \
     chown -R site:site /home/site;
 
-# Misc
-# @todo simplify this as much as possible, or plain remove
-# Disabled for now : may be needed for some ssh connections inside container
-# -----------------------------------------------------------------------------
-#RUN echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config;
-
 
 # Composer global install
 # -----------------------------------------------------------------------------
@@ -82,6 +74,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     mkdir -p /home/site/.composer && \
     chown -R site:site /home/site/.composer
 
+# Nodejs global install (https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
+# -----------------------------------------------------------------------------
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+RUN apt-get install -y nodejs
 
 # -----------------------------------------------------------------------------
 
