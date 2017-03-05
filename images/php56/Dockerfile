@@ -20,6 +20,7 @@ RUN apt-get update && \
     php5-xsl \
     php5-memcached \
     php5-ldap \
+    php5-sqlite \
     php5-xdebug \
     libapache2-mod-php5
 

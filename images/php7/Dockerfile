@@ -31,6 +31,7 @@ RUN apt-get update && \
     php7.0-memcached \
     php7.0-ldap \
     php7.0-xdebug \
+    php7.0-sqlite3 \
     libapache2-mod-php7.0
 
 # -----------------------------------------------------------------------------
