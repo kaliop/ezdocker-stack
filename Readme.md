@@ -231,6 +231,26 @@ Note: To send a specific header with Chrome for example, you can use the ModHead
 Note: by default you will be using the 'dev' Symfony environment. To change it, override the SYMFONY_ENV environment variable in `docker-compose.env.local`.
 (the default is taken from file docker-compose.env)
 
+### Available bash functions in cli container
+
+When connected to the cli container, the following bash functions/alias are available: 
+
+
+* **ez4cacheclear**: Clear eZ Publish 4 caches (using ezcache.php available options)
+* **ez4cacheclearall** : Clear all eZ Publish 4 caches
+* **ez4generateautoloads** : Generate eZ Publish 4 autoloads (using ezpgenerateautoloads.php available options)
+* **ez4generateautoloadsall** : Generate all eZ Publish 4 autoloads
+* **ez4xmlinstaller** : Run ezxmlinstaller script
+* **ez4solrupdate** : update Solr index in eZ Publish 4 project
+* **ez4solrupdatenohup** : update Solr index in eZ Publish 4 project with nohup
+* **ez5cacheclear** : Clear eZ Publish 5 caches
+* **ez5solrupdate** : update Solr index in eZ Publish 5 project
+* **ez5solrupdatenohup** : update Solr index in eZ Publish 5 project with nohup
+
+
+* **fosjsdump** : Dump FosJS routes
+* **dumpassets** : Dump assets
+
 ### Using Solr admin
 
 Solr admin interface can be accessed either through port 8983, i.e http://localhost:8983, or with the /solr/ url, i.e http://www.mysite.ezdev/solr/ .
@@ -352,7 +372,7 @@ You can  change this in your own docker-compose.yml if needed.
 Connecting to the db from the host machine is possible. Just remember that:  
 to connect to the MySQL server from the host machine, use a command akin to 
 
-	mysql -u<user> -p<password> -h127.0.0.2 -P3307
+	mysql -u<user> -p<password> -h127.0.0.1 -P3307
 	
 	
 (this way the mysql client will not try to use a unix socket connection, as it does when using localhost/127.0.0.1)
