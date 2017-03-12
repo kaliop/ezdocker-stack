@@ -11,18 +11,17 @@ alias ll='ls -lhF'
 alias lla='ls -lA'
 alias l='ls -CF'
 
-alias ez5cacheclear='php ezpublish/console cache:clear'
-alias ez5installassets='php ezpublish/console assets:install --relative --symlink web'
-alias fosjsdump='php ezpublish/console fos:js-routing:dump'
-alias dumpassets='php ezpublish/console assetic:dump'
 
-#bash function to run solr indexation with ezfind. 1st parameter must be admin siteaccess
-alias indexsolrez5='function _indexsolr() {
-php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php --siteaccess=$1;
-};_indexsolr'
+alias dumpassets='php ezpublish/console assetic:dump'
 
 #bash alias for composer to run composer without memory_limit
 alias composer='php -d memory_limit=-1 /usr/local/bin/composer'
+
+######################### ez Publish bash functions
+
+alias ez5cacheclear='php ezpublish/console cache:clear'
+alias ez5installassets='php ezpublish/console assets:install --relative --symlink web'
+alias fosjsdump='php ezpublish/console fos:js-routing:dump'
 
 # smart eZ4 cache clear function
 function ez4cacheclear()
@@ -48,9 +47,105 @@ function ez4cacheclear()
 }
 alias ez4cacheclearall='ez4cacheclear --clear-all'
 
-# note: deactivated, as notify-send is only useful when a GUI is installed, and it comes with a thousand package dependencies
-# Add an "alert" alias for long running commands.  Use like so: `sleep 10; alert`
-#alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# smart eZ4 generate autoloads function
+function ez4generateautoloads()
+{
+    local is_ez4_dir=$(test $(ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    local has_ez4_instance_into_web=$(test $(cd web 2>/dev/null;ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    if $is_ez4_dir; then
+        echo "Generating eZ4 autoloads: php bin/php/ezpgenerateautoloads.php $@"
+        php bin/php/ezpgenerateautoloads.php $@
+    elif [ -d ezpublish_legacy ]; then
+        echo "Generating eZ4 legacy autoloads: php bin/php/ezpgenerateautoloads.php $@"
+        pushd ezpublish_legacy > /dev/null
+        php bin/php/ezpgenerateautoloads.php $@
+        popd > /dev/null
+    elif $has_ez4_instance_into_web; then
+        echo "Generating eZ4 web autoloads: php bin/php/ezpgenerateautoloads.php $@"
+        pushd web > /dev/null
+        php bin/php/ezpgenerateautoloads.php $@
+        popd > /dev/null
+    else
+        echo "No eZ legacy instance found"
+    fi
+}
+alias ez4generateautoloadsall='ez4generateautoloads -k; ez4generateautoloads -o; ez4generateautoloads -e'
+
+# smart eZ4 xmlinstaller function
+function ez4xmlinstaller()
+{
+    local is_ez4_dir=$(test $(ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    local has_ez4_instance_into_web=$(test $(cd web 2>/dev/null;ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    if $is_ez4_dir; then
+        echo "eZ4 xmlinstaller: php extension/ezxmlinstaller/bin/php/xmlinstaller.php --template=xmlinstaller/process $@"
+        php extension/ezxmlinstaller/bin/php/xmlinstaller.php --template=xmlinstaller/process $@
+    elif [ -d ezpublish_legacy ]; then
+        echo "eZ4 legacy xmlinstaller: php extension/ezxmlinstaller/bin/php/xmlinstaller.php --template=xmlinstaller/process $@"
+        pushd ezpublish_legacy > /dev/null
+        php extension/ezxmlinstaller/bin/php/xmlinstaller.php --template=xmlinstaller/process $@
+        popd > /dev/null
+    elif $has_ez4_instance_into_web; then
+        echo "eZ4 web xmlinstaller: php extension/ezxmlinstaller/bin/php/xmlinstaller.php --template=xmlinstaller/process $@"
+        pushd web > /dev/null
+        php extension/ezxmlinstaller/bin/php/xmlinstaller.php --template=xmlinstaller/process $@
+        popd > /dev/null
+    else
+        echo "No eZ legacy instance found"
+    fi
+}
+
+# smart Solr update eZ4 function
+function ez4solrupdate()
+{
+    local nohup_cmd=''
+    local nohup_end=''
+    if [ "$1" = "nohup" ]; then
+        nohup_cmd='nohup'
+        nohup_end='&'
+        shift
+    fi
+    local is_ez4_dir=$(test $(ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    local has_ez4_instance_into_web=$(test $(cd web 2>/dev/null;ls -1 -d settings lib kernel bin design extension 2>/dev/null|wc -l) != 6 && echo false || echo true)
+    if $is_ez4_dir; then
+        echo "Updating eZ4 Solr index: $nohup_cmd php extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+        eval "$nohup_cmd php extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+    elif [ -d ezpublish_legacy ]; then
+        echo "Updating eZ4 legacy Solr index: $nohup_cmd php extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+        pushd ezpublish_legacy > /dev/null
+        eval "$nohup_cmd php extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+        popd > /dev/null
+    elif $has_ez4_instance_into_web; then
+        echo "Updating eZ4 web Solr index: $nohup_cmd php extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+        pushd web > /dev/null
+        eval "$nohup_cmd php extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+        popd > /dev/null
+    else
+        echo "No eZ legacy instance found"
+    fi
+}
+alias ez4solrupdatenohup='ez4solrupdate nohup'
+
+# smart Solr update eZ5 function
+function ez5solrupdate()
+{
+    local nohup_cmd=''
+    local nohup_end=''
+    if [ "$1" = "nohup" ]; then
+        nohup_cmd='nohup'
+        nohup_end='&'
+        shift
+    fi
+    local is_ez5_dir=$(test $(ls -1 -d ezpublish src vendor web 2>/dev/null|wc -l) != 4 && echo false || echo true)
+    if $is_ez5_dir; then
+        echo "Updating eZ5 Solr index: $nohup_cmd php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+        eval "$nohup_cmd php ezpublish/console ezpublish:legacy:script extension/ezfind/bin/php/updatesearchindexsolr.php $@ $nohup_end"
+    else
+        echo "No eZ5 instance found"
+    fi
+}
+alias ez5solrupdatenohup='ez5solrupdate nohup'
+
 
 if [ -f ~/.git-completion.bash ]; then
   . ~/.git-completion.bash
