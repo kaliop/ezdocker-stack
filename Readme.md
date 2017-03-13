@@ -116,9 +116,9 @@ You can therefore change these virtual hosts to suit your project's need.
 4. Environment Settings
 
     Note that all the required environment variables are already set in [docker-compose.env](docker-compose.env), only
-    set in  `docker.compose.env.local` the value of any that you need to change.
+    set in  `docker-compose.env.local` the value of any that you need to change.
 
-    * If the user-id and group-id you use on the host machine are not 1000:1000, the stack shell script will set these information automatically in `docker.compose.env.local` file.  
+    * If the user-id and group-id you use on the host machine are not 1000:1000, the stack shell script will set these information automatically in `docker-compose.env.local` file.  
         This will help with avoiding filesystem permissions later on with the web server container mount points.
         To find out the id of the current user/group on the host machine, execute the `id` command.  
 
@@ -141,7 +141,7 @@ You can therefore change these virtual hosts to suit your project's need.
 
 	The docker stack provides a shell script to manage your project's docker-compose file.
 	The script is interactive and will ask you a few questions to configure your project the first time you run it.
-	Once this is done, `docker.compose.env.local`, `docker-compose.config.sh` and `docker-compose.yml` files will be created in the main folder.
+	Once this is done, `docker-compose.env.local`, `docker-compose.config.sh` and `docker-compose.yml` files will be created in the main folder.
 	
 	Here are the information you will need to enter in your console to configure your project : 
 	
@@ -267,7 +267,7 @@ Solr admin interface can be accessed either through port 8983, i.e http://localh
 
     ./stack.sh reset
     
-This will delete `docker.compose.env.local`, `docker-compose.config.sh` and `docker-compose.yml` files.
+This will delete `docker-compose.env.local`, `docker-compose.config.sh` and `docker-compose.yml` files.
 The script will ask you for project configuration on next run.
 
 ## Delete all log files
