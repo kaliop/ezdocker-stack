@@ -6,7 +6,19 @@
 # The docker-compose 'service' name corresponds to the top-level yml keys, whereas the container name is used in most
 # 'docker' commands.
 # Keeping a separate container name for each project allows to run many container platforms in parallel
-version: '2'
+# Compose file format  | Docker Engine release
+#         3.0 ; 3.1    |    1.13.0+
+#         2.1          |    1.12.0+
+#         2.0          |    1.10.0+
+#         1.0          |    1.9.1.+
+#
+version: '2.1'
+networks:
+    app_net:
+        driver: bridge
+        ipam:
+            config:
+            - subnet: 192.168.255.100/26 # subnet mask 255.255.255.192 ip usable [192.168.255.65 -> 192.168.255.126]
 services:
     web:
         image: klabs/apache_${DOCKER_PHP_VERSION}
@@ -27,6 +39,9 @@ services:
             - docker-compose.env.local
         cap_add:
             - SYS_PTRACE
+        networks:
+            app_net:
+                ipv4_address: 192.168.255.101
 
     cli:
         image: klabs/cli_${DOCKER_PHP_VERSION}
@@ -49,7 +64,9 @@ services:
             - docker-compose.env.local
         cap_add:
             - SYS_PTRACE
-
+        networks:
+            app_net:
+                ipv4_address: 192.168.255.102
     memcached:
         image: klabs/memcached
         hostname:  ${DOCKER_PROJECT_NAME}_memcached
@@ -63,7 +80,9 @@ services:
             - docker-compose.env.local
         cap_add:
             - SYS_PTRACE
-
+        networks:
+            app_net:
+                ipv4_address: 192.168.255.103
     solr:
         image: klabs/solr4
         hostname: ${DOCKER_PROJECT_NAME}_solr
@@ -79,3 +98,6 @@ services:
             - docker-compose.env.local
         cap_add:
             - SYS_PTRACE
+        networks:
+            app_net:
+                ipv4_address: 192.168.255.104
