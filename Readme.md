@@ -14,7 +14,7 @@ All Docker images used in this stack are published on Docker hub, in klabs repos
 The development environment is based on Docker containers and requires:
 
 * Docker 1.10.0 or later
-* Docker Compose 1.6.0 or later
+* Docker Compose 1.12.0 or later
 
 
 *IMPORTANT* make sure your installed versions of Docker and Docker Compose are not older than the required ones!
