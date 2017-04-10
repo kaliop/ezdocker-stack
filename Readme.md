@@ -251,6 +251,12 @@ When connected to the cli container, the following bash functions/alias are avai
 * **fosjsdump** : Dump FosJS routes
 * **dumpassets** : Dump assets
 
+You can also mount your own bash aliases by mounting a .bash_aliases file in /home/site folder as a volume in the cli container : 
+
+
+    - ~/.bash_aliases:/home/site/.bash_aliases
+    
+
 ### Using Solr admin
 
 Solr admin interface can be accessed either through port 8983, i.e http://localhost:8983, or with the /solr/ url, i.e http://www.mysite.ezdev/solr/ .
