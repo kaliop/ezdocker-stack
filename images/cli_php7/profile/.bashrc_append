@@ -155,6 +155,10 @@ if [ -f ~/.git-prompt.sh ]; then
   . ~/.git-prompt.sh
 fi
 
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
 GIT_CONFIGURED=$(git config --list | grep "user.email")
 if [ "$GIT_CONFIGURED" == "" ]; then
     echo "Your git profile does not seem to be configured"
