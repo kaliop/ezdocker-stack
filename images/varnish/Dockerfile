@@ -19,7 +19,8 @@ RUN apt-get update && \
     vim \
     htop \
     procps \
-    net-tools;
+    net-tools \
+    netcat;
 
 # varnish
 # -----------------------------------------------------------------------------
