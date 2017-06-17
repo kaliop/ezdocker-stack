@@ -1,8 +1,8 @@
 Varnish 4 Docker image
 =====================
 
-This image (based on Debian 8) runs Varnish 4.0.3 on port 81.  
-varnishncsa and varnish-agent are also installed in the container.
+This image (based on Debian Jessie) runs Varnish 4.1.6 on port 81.  
+varnishncsa and varnish-agent are also installed in the container.  
 
 
 How to run the container
@@ -15,7 +15,7 @@ You can run the container with the docker run command :
 
 
   ``` sh
-    docker run klabs/varnish
+    docker run klabs/varnish41
     ```
 
  But is is strongly recommended to use docker-compose with the stack.sh script provided in [ezdocker-stack](https://github.com/kaliop/ezdocker-stack/) repository.
@@ -47,7 +47,7 @@ Here is an example :
       extends:
         file: /home/user/docker/varnish4/docker-compose.yml
         service: varnish4
-      image: klabs/varnish
+      image: klabs/varnish41
       volumes:
        - /home/user/www/project/doc/varnish/vcl/config.vcl:/etc/varnish/default.vcl
       links:
