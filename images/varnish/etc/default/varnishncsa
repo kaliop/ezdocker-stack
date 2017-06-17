@@ -11,7 +11,7 @@
 # NCSA log format, to be used by HTTP log analyzers
 VARNISHNCSA_ENABLED=1
 
-LOG_FORMAT="%h|%u|%{%Y-%m-%d}t|%{%H:%M:%S}t|%{%z}t|%m|%{Host}i|%U|%q|%s|%b|%{Referer}i|%{User-agent}i|%{Varnish:time_firstbyte}x|%T|%D|%{Varnish:handling}x|%{X-FE-Varnish-Obj-TTL}o|%{X-FE-Varnish-Backend}o|%{X-FE-Varnish-Obj-Stat}o|%{X-Location-Id}i|%{X-PropReference-Id}i"
+LOG_FORMAT="%h|%u|%{%Y-%m-%d}t|%{%H:%M:%S}t|%{%z}t|%m|%{Host}i|%U|%q|%s|%b|%{Referer}i|%{User-agent}i|%{Varnish:time_firstbyte}x|%T|%D|%{Varnish:handling}x|%{X-FE-Varnish-Obj-TTL}o|%{X-FE-Varnish-Obj-Stat}o|%{X-Location-Id}i"
 
 DAEMON_OPTS="-a -w /var/log/varnish/varnishncsa.log -D -P /var/run/varnishncsa/varnishncsa.pid -F ${LOG_FORMAT}"
 

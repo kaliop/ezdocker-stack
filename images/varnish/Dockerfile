@@ -29,10 +29,11 @@ RUN curl https://repo.varnish-cache.org/GPG-key.txt | apt-key add - && \
     apt-get install -y \
     varnish varnish-agent;
 
-RUN mv /etc/varnish/default.vcl /etc/varnish/default.vcl.ori
-COPY varnish/default_ez54.vcl /etc/varnish/default.vcl
-COPY varnish/default/varnish /etc/default/varnish
-COPY varnish/default/varnishncsa /etc/default/varnishncsa
+
+COPY etc/default/varnish /etc/default/varnish
+COPY etc/default/varnishncsa /etc/default/varnishncsa
+# Fix user group for varnishncsa.pid
+COPY etc/init.d/varnishncsa /etc/init.d/varnishncsa
 
 RUN echo "varnish:CacheMeIfYouCan" > /etc/varnish/agent_secret
 

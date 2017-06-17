@@ -51,6 +51,7 @@ DAEMON_OPTS="-a :81 \
              -T localhost:6082 \
              -f /etc/varnish/default.vcl \
              -S /etc/varnish/secret \
+             -p vcc_allow_inline_c=on \
              -s malloc,1024m"
 
 
