@@ -17,8 +17,6 @@ RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 RUN apt-get update && \
     apt-get install -y \
     php7.1 \
-    libapache2-mod-php7.1 \
-    php7.1-fpm \
     php7.1-cli \
     php7.1-mysqlnd \
     php7.1-mcrypt \
@@ -42,9 +40,7 @@ RUN mkdir /var/log/php/
 RUN sed -rie 's|error_log = /var/log/php7.1-fpm.log|error_log = /var/log/php/php7.1-fpm.log|g' /etc/php/7.1/fpm/php-fpm.conf
 
 # Disable xdebug
-RUN echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/cli/php.ini \
-    echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/fpm/php.ini \
-    echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/apache2/php.ini
+RUN echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/cli/php.ini
 
 # Clear archives in apt cache folder
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
