@@ -88,12 +88,20 @@ checkRequiredFiles() {
      if [ ! -f ~/.gitconfig ]; then
         echo "~/.gitconfig file not found. Creating empty file"
         touch ~/.gitconfig
-     fi
+        if [ ! -f ~/.gitconfig ]; then
+             echo "~/.gitconfig file can not be created ! Aborting ..."
+             exit 1;
+        fi
+    fi
 
       if [ ! -f ~/.ssh/config ]; then
         echo "~/.ssh/config file not found. Creating empty file"
         touch ~/.ssh/config
-     fi
+        if [ ! -f ~/.ssh/config ]; then
+             echo "~/.ssh/config file can not be created ! Aborting ..."
+             exit 1;
+        fi
+    fi
 }
 
 buildDockerComposeConfigFileIfNeeded() {
