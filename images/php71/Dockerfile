@@ -33,12 +33,6 @@ RUN apt-get update && \
     php7.1-xdebug \
     php7.1-sqlite3
 
-# PHP config
-# -----------------------------------------------------------------------------
-# Custom PHP-FPM error log folder
-RUN mkdir /var/log/php/
-RUN sed -rie 's|error_log = /var/log/php7.1-fpm.log|error_log = /var/log/php/php7.1-fpm.log|g' /etc/php/7.1/fpm/php-fpm.conf
-
 # Disable xdebug
 RUN echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/cli/php.ini
 
