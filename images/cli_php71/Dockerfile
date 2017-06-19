@@ -33,7 +33,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     jpegoptim \
     poppler-utils \
     openjdk-7-jre-headless \
-    php7.0-mbstring;
+    php7.1-mbstring;
 
 # Configure locale for date, time & currency php functions
 # q: for what is the locale setup needed ?

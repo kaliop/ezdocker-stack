@@ -1,4 +1,4 @@
-# PHP 7.0 CLI Docker image
+# PHP 7.1 CLI Docker image
 
 This is a command-line image that can be used for your projects. All shell commands should be run from here.
 
@@ -6,7 +6,7 @@ Image is built on Debian jessie.
 
 The software packages installed are:
 
-* PHP 7.0
+* PHP 7.1
 * ImageMagick 6.7
 * Composer
 * GIT
@@ -35,7 +35,7 @@ You can run the container with the docker run command :
 
 
     ``` sh
-    docker run klabs/cli_php7
+    docker run klabs/cli_php71
     ```
 
  But is is strongly recommended to use docker-compose with the stack.sh script provided in [ezdocker-stack](https://github.com/kaliop/ezdocker-stack/) repository.
