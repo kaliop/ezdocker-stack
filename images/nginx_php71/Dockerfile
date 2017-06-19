@@ -38,9 +38,11 @@ ENV LC_ALL $DOCKER_LOCALE
 ENV LANG $DOCKER_LOCALE
 ENV LANGUAGE $DOCKER_LOCALE
 
-# Nginx
+# Install Nginx & PHP
 # -----------------------------------------------------------------------------
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    nginx \
+    php7.1-fpm
 
 # Local user
 # => to try : run container with --user option to set root user id with host user id
@@ -55,7 +57,8 @@ RUN addgroup --gid 1013 site && \
     cp /etc/skel/.* /home/site/; \
     chown -R site:site /home/site;
 
-# tweak nginx config
+# Nginx config
+# -----------------------------------------------------------------------------
 RUN sed -i -e"s/worker_processes  1/worker_processes 4/" /etc/nginx/nginx.conf && \
 sed -i -e"s/keepalive_timeout\s*65/keepalive_timeout 2/" /etc/nginx/nginx.conf && \
 sed -i -e"s/keepalive_timeout 2/keepalive_timeout 2;\n\tclient_max_body_size 100m/" /etc/nginx/nginx.conf && \
@@ -63,12 +66,23 @@ sed -i -e's|user www-data;|user site;|g' /etc/nginx/nginx.conf
 
 RUN chmod 755 -R /var/log/nginx
 
-# php config
+# PHP config
+# -----------------------------------------------------------------------------
 RUN sed -rie 's|user = www-data|user = site|g' /etc/php/7.1/fpm/pool.d/www.conf && \
-sed -rie 's|listen.owner = www-data|listen.owner = site|g' /etc/php/7.1/fpm/pool.d/www.conf && \
+    sed -rie 's|listen.owner = www-data|listen.owner = site|g' /etc/php/7.1/fpm/pool.d/www.conf
+
+# Disable xdebug
+RUN echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/fpm/php.ini \
+    echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/apache2/php.ini
+
+# Custom PHP-FPM error log folder
+RUN mkdir /var/log/php/
+RUN chmod 755 -R /var/log/php/
+RUN sed -rie 's|error_log = /var/log/php7.1-fpm.log|error_log = /var/log/php/php7.1-fpm.log|g' /etc/php/7.1/fpm/php-fpm.conf
 
 
-# vhost config
+# Vhost config
+# -----------------------------------------------------------------------------
 # controlpanel is burned into the container
 COPY etc/nginx/conf.d/010-controlpanel.conf /etc/nginx/conf.d/010-controlpanel.conf
 COPY etc/nginx/sites-available/default /etc/nginx/sites-available/000-default
