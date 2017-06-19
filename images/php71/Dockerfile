@@ -34,7 +34,7 @@ RUN apt-get update && \
     php7.1-sqlite3
 
 # Disable xdebug
-RUN echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/cli/php.ini
+RUN echo "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/cli/php.ini
 
 # Clear archives in apt cache folder
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
