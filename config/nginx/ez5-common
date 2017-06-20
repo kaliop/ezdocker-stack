@@ -1,0 +1,139 @@
+
+# *** NB: Rules for rewrite rules ***
+# since this file is included within a 'location /' block, we have to be careful:
+# to trigger execution of a php file, such as index_treemenu_tags.php or index_cluster.php, we have to use the LAST tag
+# for access to static files, we can use the BREAK tag
+#
+# when we use BREAK, execution continues within this block. Which means we CAN use more 'location' sub-blocks for e.g. ttls
+# when we use LAST, we CAN NOT use further 'location' sub-blocks
+
+# Custom rewrite rules for eztags
+#rewrite "^/tags/treemenu/?" "/index_treemenu_tags.php" last;
+#rewrite "^/index_treemenu_tags\.php" "/index_treemenu_tags.php" last;
+
+# Api rest v1
+rewrite "^/api/[^/]+/v1/" "/index_rest.php" last;
+
+# Fix for accessing storage files (other than images) directly (Error 500 otherwise)
+# Uncomment if you need to load *all* binary files from storage folder directly in front
+# NB: this means accessing ALL binary files bypassing eZ permissions!
+# NB: a more restricted rule has been put in place a few lines later, only for 'image' binary files...
+#rewrite "^/var/([^/]+/)?storage/(.*)" "/var/$1storage/$2" break;
+
+
+# Non-cluster mode
+rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/var/$1storage/images$2/$3" break;
+rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/var/$1cache/$2/$3" break;
+rewrite "^/var/([^/]+/)?storage/original/image/(.*)" "/var/$1storage/original/image/$2" break;
+
+rewrite "^/index_cluster\.php" "/index_cluster.php" last;
+
+rewrite "^/design/([^/]+)/(stylesheets|images|javascript|fonts)/(.*)" "/design/$1/$2/$3" break;
+rewrite "^/share/icons/(.*)" "/share/icons/$1" break;
+rewrite "^/extension/([^/]+)/design/([^/]+)/(stylesheets|flash|images|lib|javascripts?)/(.*)" "/extension/$1/design/$2/$3/$4" break;
+rewrite "^/extension/([^/]+)/share/icons/([^/]+)/(32x32|16x16_indexed|16x16_original|16x16_ghost?)/(.*)" "/extension/$1/share/icons/$2/$3/$4" break;
+rewrite "^/packages/styles/(.+)/(stylesheets|images|javascript)/([^/]+)/(.*)" "/packages/styles/$1/$2/$3/$4" break;
+rewrite "^/packages/styles/(.+)/thumbnail/(.*)" "/packages/styles/$1/thumbnail/$2" break;
+rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
+
+# Makes it possible to place your favicon at the root of your
+# eZ Publish instance. It will then be served directly.
+rewrite "^/favicon\.ico" "/favicon.ico" break;
+# Uncomment the line below if you want you favicon be served
+# from the standard design. You can customize the path to
+# favicon.ico by changing /design/standard/images/favicon\.ico
+#rewrite "^/favicon\.ico" "/design/standard/images/favicon.ico" break;
+rewrite "^/design/standard/images/favicon\.ico" "/design/standard/images/favicon.ico" break;
+
+# Additional Assetic rules for eZ Publish 5.1 / 2013.4 and higher.
+## Don't forget to run php ezpublish/console assetic:dump --env=XXX
+# NB: we now hardcode the fact that assetic controller is disabled to the name of the SF env. Maybe we should use a separate variable...
+if ($environment != dev) {
+    rewrite "^/css/(.*)\.css" "/css/$1.css" break;
+    rewrite "^/js/(.*)\.js" "/js/$1.js" break;
+    rewrite "^/compiled/(.*)\.js" "/compiled/$1.js" break;
+    rewrite "^/compiled/(.*)\.css" "/compiled/$1.css" break;
+    rewrite "^/font/(.*)\.ttf" "/font/$1.ttf" break;
+    rewrite "^/font/(.*)\.woff" "/font/$1.woff" break;
+    rewrite "^/font/(.*)\.otf" "/font/$1.otf" break;
+    rewrite "^/font/(.*)\.eot" "/font/$1.eot" break;
+    rewrite "^/font/(.*)\.svg" "/font/$1.svg" break;
+}
+
+
+# Platform for Privacy Preferences Project ( P3P ) related files
+# for Internet Explorer
+# More info here : http://en.wikipedia.org/wiki/P3p
+rewrite "^/w3c/p3p\.xml" "/w3c/p3p.xml" break;
+
+# Uncomment the following lines when using popup style debug in legacy
+#rewrite "^/var/([^/]+/)?cache/debug\.html.*" "/var/$1cache/debug.html.$2" break;
+
+# Following rule is needed to correctly display assets from eZ Publish5 / Symfony bundles
+rewrite "^/bundles/(.*)" "/bundles/$1" break;
+
+rewrite "^(.*)$" "/index.php$1" last;
+
+disable_symlinks off;
+
+# Allow compression of text contents
+# NB: if there is an nginx server in front of varnish, we might leave it as the only one doing gzip/degzip ?
+gzip on;
+gzip_disable "msie6";
+gzip_static on;
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_buffers 16 8k;
+gzip_http_version 1.1;
+gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+# Expires headers for assets
+
+#location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|swf|flv)$ {
+#    access_log off;
+#    expires 30d;
+#}
+
+# eZ Publish appends the version number to image URL (ezimage datatype) so when an image is updated, its URL changes too
+# NB: read at the top of this file why enabling this block is not a good idea
+location ~ ^/var/[^/]+/storage/images/.* {
+    add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+}
+
+# A good optimization if you don't change your design often
+location ~ ^/extension/[^/]+/design/[^/]+/(stylesheets|images|javascripts?|flash)/.*  {
+    add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+}
+
+# Libraries get a new url (version number) on updates
+location ~ ^/extension/[^/]+/design/[^/]+/lib/.* {
+    add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+}
+
+# Same as above for bundled eZ Publish designs
+location ~ ^/design/[^/]+/(stylesheets|images|javascripts?|lib|flash)/.* {
+    add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+}
+
+# Icons as used by admin interface, barely change
+location ~ ^/share/icons/.* {
+    add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+}
+
+# Assetic stuff - we can instruct it to generate new urls on deploy
+location ~ ^/(css|js|compiled|font)/.* {
+    if ($environment != dev) {
+        add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+    }
+
+    if ($environment = dev) {
+        # in dev mode, need to also add the rewrite rule here... as this location will match before the '/' one
+        rewrite "^(.*)$" "/index.php$1" last;
+    }
+}
+
+# Bundle stuff - treat it like design
+location ~ ^/(bundles)/.* {
+    add_header Cache-Control "public, s-maxage=7776000, max-age=3600";
+}

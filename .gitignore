@@ -8,6 +8,7 @@
 
 /config/cli/php5/timezone.ini
 /config/apache/php5/timezone.ini
+/config/nginx/php/timezone.ini
 
 /data/mysql/*
 /data/solr/*

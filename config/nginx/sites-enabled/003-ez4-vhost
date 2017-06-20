@@ -1,0 +1,55 @@
+server {
+
+    include environment_common;
+
+    # Port to listen to
+    listen       80;
+    # Host and alias to respond to
+    # Further documentation: http://nginx.org/en/docs/http/server_names.html
+    server_name ~^(?<site>.+?)\.(?<sname>.+?).ez4$;
+    set $_document_root /var/www/$sname;
+
+    root $_document_root;
+
+    index  index.php;
+
+    location / {
+        location ~ ^/(index|index_(rest|cluster|treemenu_tags))\.php(/|$) {
+            # Including the distribution's default fastcgi parameters
+            include fastcgi_params;
+
+            include fastcgi_common;
+
+            rewrite "^([^/]+/)?content/treemenu.*" "index_treemenu\.php" break;
+
+
+            #  Makes it possible to placed your favicon at the root of your
+            #  eZ Publish instance. It will then be served directly.
+            #rewrite ^favicon\.ico - [L]
+            #  Uncomment the line below if you want you favicon be served from the standard design.
+            #  You can customize the path to favicon.ico by replacing design/standard/images/favicon.ico
+            #  by the adequate path.
+            #rewrite ^favicon\.ico /design/standard/images/favicon\.ico [L]
+            #rewrite ^design/standard/images/favicon\.ico - [L]
+
+        }
+
+        rewrite "^/var/storage/(.*)$" "/var/storage/$1" break;
+        rewrite "^/var/([^/]+)/storage/(.*)$" "/var/$1/storage/$2" break;
+        rewrite "^/var/cache/texttoimage/(.*)$" "/var/cache/texttoimage/$1" break;
+        rewrite "^/var/([^/]+)/cache/texttoimage/(.*)$" "/var/$1/cache/texttoimage/$2" break;
+        rewrite "^/share/icons/(.*)$" "/share/icons/$1" break;
+        rewrite "^/design/([^/]+)/(stylesheets|images|javascript)/(.*)$" "/design/$1/$2/$3" break;
+        rewrite "^/extension/([^/]+)/design/([^/]+)/(stylesheets|images|lib|javascripts|javascript|flash?)/(.*)$" "/extension/$1/design/$2/$3/$4" break;
+        rewrite "^/extension/([^/]+)/share/(.*)$" "/extension/$1/share/$2" break;
+        rewrite "^/var/([^/]+)/cache/public/(.*)$" "/var/$1/cache/public/$2" break;
+
+        rewrite "^/content/treemenu/?$" "/index_treemenu.php" last;
+        rewrite "^(.*)$" "/index.php$1" last;
+
+    }
+
+    # Custom logs
+    access_log /var/log/nginx/access_ez4.log;
+    error_log  /var/log/nginx/error_ez4.log notice;
+}
