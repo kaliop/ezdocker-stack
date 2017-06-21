@@ -159,7 +159,7 @@ services:
       container_name: graylog-mongo
       image: "mongo:3"
       volumes: 
-        - ./data/graylog:/docker-entrypoint-initdb.d
+        - ./config/graylog:/docker-entrypoint-initdb.d
     elasticsearch:
       container_name: graylog-elastic
       image: "elasticsearch:2"
