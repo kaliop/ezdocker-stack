@@ -1,0 +1,1 @@
+mongorestore --gzip --archive=/docker-entrypoint-initdb.d/dump.graylog.gz --db graylog
