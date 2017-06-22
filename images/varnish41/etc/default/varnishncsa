@@ -1,0 +1,86 @@
+# Configuration file for varnishncsa
+#
+# Note: If systemd is installed, this file is obsolete and ignored.  You will
+# need to copy /lib/systemd/system/varnishncsa.service to /etc/systemd/system/
+# and edit that file.
+#
+# Uncomment this to enable logging for varnish.  Please make sure you have
+# enough disk space for significant amounts of log data.  To disable logging,
+# set the variable to "0", "no", or leave it unset.
+#
+# NCSA log format, to be used by HTTP log analyzers
+VARNISHNCSA_ENABLED=1
+
+LOG_FORMAT="%h|%u|%{%Y-%m-%d}t|%{%H:%M:%S}t|%{%z}t|%m|%{Host}i|%U|%q|%s|%b|%{Referer}i|%{User-agent}i|%{Varnish:time_firstbyte}x|%T|%D|%{Varnish:handling}x|%{X-FE-Varnish-Obj-TTL}o|%{X-FE-Varnish-Obj-Stat}o|%{X-Location-Id}i"
+
+DAEMON_OPTS="-a -w /var/log/varnish/varnishncsa.log -D -P /var/run/varnishncsa/varnishncsa.pid -F ${LOG_FORMAT}"
+
+#--------------------------------------------------------
+#                   LOG_FORMAT legend:
+#--------------------------------------------------------
+#
+# Check with: tail -n1 varnishncsa.log | tr '|' '\n' | cat -n
+#
+# 1 %h
+#   Remote host. Should be IP of the client. In VCL this is set
+#   from X-Forwarded-For, if not coming from LB.
+# 
+# 2 %u
+#   Remote auth user.
+# 
+# 3 %{%Y-%m-%d}t
+#   date in YYYY-MM-DD format.
+# 
+# 4 %{%H:%M:%S}t
+#   time in HH:MM:SS format.
+# 
+# 5 %{%z}t
+#   timezone, e.g. -0700.
+# 
+# 6 %m
+#   Request method.
+#
+# 7 %{Host}i
+#   Host header supplied in HTTP request.
+# 
+# 8 %U
+#   The request URL without any query string.
+# 
+# 9 %q
+#   The query string, if supplied.
+# 
+# 10 %s
+#   Status sent to the client.
+# 
+# 11 %b
+#   Size of response in bytes, excluding HTTP headers.
+# 
+# 12 %{Referer}i
+#   The contents of request header.
+# 
+# 13 %{User-agent}i
+#   The contents of request header.
+# 
+# 14 %{Varnish:time_firstbyte}x
+#   Time from when the request processing starts until the
+#   first byte is sent to the client.
+# 
+# 15 %T
+#   Time taken to serve the request, in seconds.
+# 
+# 16 %D
+#   Time taken to serve the request, in microseconds.
+# 
+# 17 %{Varnish:handling}x
+#   How the request was handled, whether it was a cache hit, 
+#   miss, pass, pipe or error.
+# 
+# 18 %{X-FE-Varnish-Obj-TTL}o
+#   Custom header showing remaining TTL of the object.
+# 
+# 19 %{X-FE-Varnish-Backend}o
+#   Custom header showing backend for the object.
+# 
+# 20 %{X-FE-Varnish-Obj-Stat}o
+#   Custom header showing whether request resulted in cache HIT
+#   or MISS, if HIT, the number of HITs thus far for the object.

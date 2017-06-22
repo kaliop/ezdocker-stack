@@ -11,17 +11,15 @@ alias ll='ls -lhF'
 alias lla='ls -lA'
 alias l='ls -CF'
 
-
-alias dumpassets='php ezpublish/console assetic:dump'
-
 #bash alias for composer to run composer without memory_limit
 alias composer='php -d memory_limit=-1 /usr/local/bin/composer'
 
 ######################### ez Publish bash functions
 
 alias ez5cacheclear='php ezpublish/console cache:clear'
-alias ez5installassets='php ezpublish/console assets:install --relative --symlink web'
-alias fosjsdump='php ezpublish/console fos:js-routing:dump'
+alias ez5assetsinstall='php ezpublish/console assets:install --relative --symlink web'
+alias ez5fosjsdump='php ezpublish/console fos:js-routing:dump'
+alias ez5asseticdump='php ezpublish/console assetic:dump'
 
 # smart eZ4 cache clear function
 function ez4cacheclear()

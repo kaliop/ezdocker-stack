@@ -1,0 +1,4 @@
+# Here you can define variables available in your virtual hosts if you include this file
+
+set $_symfony_env dev;
+set $_symfony_env_demo demo;
