@@ -211,7 +211,7 @@ case "$1" in
 
     start|run)
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
-        $DOCKER_COMPOSE pull
+        #$DOCKER_COMPOSE pull
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 

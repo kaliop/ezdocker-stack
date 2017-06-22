@@ -55,10 +55,6 @@ trap clean_up SIGTERM
 
 service apache2 restart
 
-# Hook to dispatch logs in graylog (Provisional, awaiting smarter & cleaner config)
-tail -f /var/log/apache2/access.log |nc -w 1 -u graylog-server 5557 &
-tail -f /var/log/apache2/error.log |nc -w 1 -u graylog-server 5557 &
-
 echo [`date`] Bootstrap finished
 
 tail -f /dev/null &

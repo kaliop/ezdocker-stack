@@ -176,3 +176,12 @@ services:
         - elasticsearch
       ports:
         - "9000:9000"
+    filebeats:
+        container_name: graylog-filebeat
+        #image: TODO_ON_DOCKERHUB_UPLOAD
+        build: ./images/filebeat
+        depends_on:
+            - graylog
+        volumes: 
+            - ./config/graylog/filebeat:/mnt
+            - ./logs:/app-logs
