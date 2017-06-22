@@ -11,6 +11,9 @@ DOCKER_COMPOSE_FILE=${COMPOSE_FILE:=docker-compose.yml}
 # we allow this to come from shell env if already defined :-)
 DOCKER_COMPOSE_CONFIG_FILE=${DOCKER_COMPOSE_CONFIG_FILE:=docker-compose.config.sh}
 
+
+php_available_versions=(5.4 5.6 7 7.1)
+
 usage() {
     echo "Usage: ./stack.sh build/start/stop/rm/php_switch/purgelogs/reset"
 }
@@ -20,14 +23,14 @@ buildDockerComposeFile() {
     if [ ! -f "$DOCKER_COMPOSE_FILE" ]; then
 
         #choose which template should be used for project
-        read -p "What kind of stack do you want to use ? (possible values are : dev, frontend - default: dev) " docker_compose_template_type
-        docker_compose_template_type=${docker_compose_template_type:-dev}
-        template_file="docker-compose-$docker_compose_template_type-template.yml"
 
-        if [ ! -f "$template_file" ]; then
-            echo "ERROR ! wrong template file specified : aborting ..."
-            exit 1;
-        fi
+        #docker_compose_template_type=${docker_compose_template_type:-nginx}
+        template_file="docker-compose-template.yml"
+
+        #if [ ! -f "$template_file" ]; then
+        #    echo "ERROR ! wrong template file specified : aborting ..."
+        #    exit 1;
+        #fi
 
         echo "No DOCKER_COMPOSE_FILE file found, generating one from template: $template_file"
         cp "$template_file" "$DOCKER_COMPOSE_FILE"
@@ -49,10 +52,8 @@ buildDockerComposeLocalEnvFileIfNeeded() {
 
 
 configurePhpVersion() {
-    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 , 5.6 or 7 - default: 5.6) " php_version
+    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 , 5.6 , 7 or 7.1 - default: 5.6) " php_version
     php_version=${php_version:-5.6}
-
-    php_available_versions=(5.4 5.6 7)
 
     if [[ ! " ${php_available_versions[@]} " =~ " ${php_version} " ]]; then
         echo "ERROR ! unsupported php version: aborting ..."
@@ -71,7 +72,11 @@ configurePhpVersion() {
    if [[ "$php_version" == 'php7' ]]; then
         php_config_path="/etc/php/7.0"
    else
-        php_config_path="/etc/php5"
+       if [[ "$php_version" == 'php71' ]]; then
+          php_config_path="/etc/php/7.1"
+       else
+          php_config_path="/etc/php5"
+       fi
    fi
 
    if grep -q DOCKER_PHP_CONF_PATH "$DOCKER_COMPOSE_CONFIG_FILE"; then
@@ -83,6 +88,19 @@ configurePhpVersion() {
     source $DOCKER_COMPOSE_CONFIG_FILE
 }
 
+configureWebServer() {
+
+		read -p "Which web server do you want to use ? (possible values are : apache, nginx - default: nginx) " web_server_type
+
+		available_web_servers=(nginx apache)
+
+    if [[ ! " ${available_web_servers[@]} " =~ " ${web_server_type} " ]]; then
+        echo "ERROR ! unsupported web server: aborting ..."
+        exit 1;
+    fi
+
+		echo "export DOCKER_WEB_SERVER=$web_server_type" >> $DOCKER_COMPOSE_CONFIG_FILE
+}
 # Check if some files mounted as volumes exist, and create them if they are not found
 checkRequiredFiles() {
      if [ ! -f ~/.gitconfig ]; then
@@ -165,6 +183,7 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "Configuring timezone for php ..."
         echo -e "[Date]\ndate.timezone=$timezone" > config/cli/php5/timezone.ini
         echo -e "[Date]\ndate.timezone=$timezone" > config/apache/php5/timezone.ini
+        echo -e "[Date]\ndate.timezone=$timezone" > config/nginx/php/timezone.ini
 
         # Ask for custom vcl file path
         read -p "Enter path to Varnish vcl file (default: ./config/varnish/ez54.vcl) : " vcl_filepath
@@ -183,10 +202,10 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "export DOCKER_SOLR_CONF_PATH=$solr_conf_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_LOCAL_PATH=$storage_local_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_MOUNT_POINT=/mnt/\$USER/" >> $DOCKER_COMPOSE_CONFIG_FILE
-        echo "export DOCKER_TIMEZONE=$timezone" >> $DOCKER_COMPOSE_CONFIG_FILE
 
         #Configure PHP version
         configurePhpVersion
+        configureWebServer
     fi
 }
 
@@ -211,14 +230,17 @@ checkRequiredFiles
 
 source $DOCKER_COMPOSE_CONFIG_FILE
 
-#echo "Using existing $DOCKER_COMPOSE_FILE and $DOCKER_COMPOSE_CONFIG_FILE configuration"
-
-#Always pull latest images from Docker hub
 
 case "$1" in
 
     start|run)
+        if [ ! $DOCKER_WEB_SERVER ]; then
+           echo "No DOCKER_WEB_SERVER defined ! Please run script with option web_server_switch  ..."
+           exit 1;
+        fi
+
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
+        #Always pull latest images from Docker hub
         $DOCKER_COMPOSE pull
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
@@ -227,18 +249,23 @@ case "$1" in
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" stop
         ;;
 
-	rm)
-		$DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" rm --force
-		;;
+    rm)
+        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" rm --force
+        ;;
 
     php_switch)
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
         configurePhpVersion
+        #Always pull latest images from Docker hub
         $DOCKER_COMPOSE pull
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
-	reset)
+    web_server_switch)
+        configureWebServer
+        ;;
+
+	  reset)
         rm $DOCKER_COMPOSE_CONFIG_FILE
         rm docker-compose.env.local
         rm $DOCKER_COMPOSE_FILE

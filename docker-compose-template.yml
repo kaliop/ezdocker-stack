@@ -9,20 +9,15 @@
 version: '2'
 services:
     web:
-        image: klabs/nginx_${DOCKER_PHP_VERSION}
+        extends:
+            file: ${DOCKER_WEB_SERVER}.yml
+            service: ${DOCKER_WEB_SERVER}
         hostname: ${DOCKER_PROJECT_NAME}_web
         container_name: web
         ports:
             - "82:82"
             - "88:88"
         volumes:
-            - ./config/nginx/sites-enabled/:/etc/nginx/sites-enabled/
-            - ./config/nginx/environment_common:/etc/nginx/environment_common
-            - ./config/nginx/ez5-common:/etc/nginx/ez5-common
-            - ./config/nginx/fastcgi_common:/etc/nginx/fastcgi_common
-            - ./logs/apache/:/var/log/apache2
-            - "./config/nginx/php/custom_vars.ini:$DOCKER_PHP_CONF_PATH/fpm/conf.d/custom_vars.ini"
-            - "./config/nginx/php/timezone.ini:$DOCKER_PHP_CONF_PATH/fpm/conf.d/timezone.ini"
             - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - "$DOCKER_STORAGE_LOCAL_PATH:$DOCKER_STORAGE_MOUNT_POINT"
         env_file:
@@ -77,7 +72,7 @@ services:
             - "8983:8983"
         volumes:
             - "${DOCKER_SOLR_CONF_PATH}:/opt/solr/solr/"
-            - ./data/solr/:/opt/solr/data/
+            - /home/sbressey/docker/wrbm-gb-docker/data/solr/:/opt/solr/data/
             - ./logs/solr/:/opt/solr/logs
         env_file:
             - docker-compose.env
