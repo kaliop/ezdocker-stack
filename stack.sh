@@ -13,6 +13,7 @@ DOCKER_COMPOSE_CONFIG_FILE=${DOCKER_COMPOSE_CONFIG_FILE:=docker-compose.config.s
 
 
 php_available_versions=(5.4 5.6 7 7.1)
+available_web_servers=(nginx apache)
 
 usage() {
     echo "Usage: ./stack.sh build/start/stop/rm/php_switch/purgelogs/reset"
@@ -86,20 +87,30 @@ configurePhpVersion() {
     fi
 
     source $DOCKER_COMPOSE_CONFIG_FILE
+    echo "Selected $php_version as PHP version"
 }
 
 configureWebServer() {
 
-		read -p "Which web server do you want to use ? (possible values are : apache, nginx - default: nginx) " web_server_type
+	 source $DOCKER_COMPOSE_CONFIG_FILE
 
-		available_web_servers=(nginx apache)
+		echo "Current PHP version : $DOCKER_PHP_VERSION"
+		read -p "Which web server do you want to use ? (possible values are : apache, nginx - default: apache) " web_server_type
+    web_server_type=${web_server_type:-apache}
 
     if [[ ! " ${available_web_servers[@]} " =~ " ${web_server_type} " ]]; then
         echo "ERROR ! unsupported web server: aborting ..."
         exit 1;
     fi
 
+    # Check web_server & php combination
+    if [[ "$web_server_type" == 'nginx' && "$DOCKER_PHP_VERSION" != 'php71' ]]; then
+        echo "Sorry, nginx is only available with php 7.1 for the moment"
+        exit 1;
+    fi
+
 		echo "export DOCKER_WEB_SERVER=$web_server_type" >> $DOCKER_COMPOSE_CONFIG_FILE
+		echo "Selected $web_server_type as web server"
 }
 # Check if some files mounted as volumes exist, and create them if they are not found
 checkRequiredFiles() {
@@ -254,11 +265,7 @@ case "$1" in
         ;;
 
     php_switch)
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
         configurePhpVersion
-        #Always pull latest images from Docker hub
-        $DOCKER_COMPOSE pull
-        $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
     web_server_switch)
