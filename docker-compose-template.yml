@@ -9,21 +9,15 @@
 version: '2'
 services:
     web:
-        image: klabs/apache_${DOCKER_PHP_VERSION}
+        extends:
+            file: ${DOCKER_WEB_SERVER}.yml
+            service: ${DOCKER_WEB_SERVER}
         hostname: ${DOCKER_PROJECT_NAME}_web
         container_name: web
         ports:
             - "82:82"
             - "88:88"
         volumes:
-            - ./config/apache/sites-available/001-dynamic-vhost-ez5.conf:/etc/apache2/sites-available/001-dynamic-vhost-ez5.conf
-            - ./config/apache/sites-available/002-dynamic-vhost-ezplatform.conf:/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf
-            - ./config/apache/sites-available/003-dynamic-vhost-ez4.conf:/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf
-            - ./config/apache/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
-            - ./config/apache/sites-available/ezplatform-common.conf:/etc/apache2/sites-available/ezplatform-common.conf
-            - ./logs/apache/:/var/log/apache2
-            - "./config/apache/php5/custom_vars.ini:$DOCKER_PHP_CONF_PATH/apache2/conf.d/custom_vars.ini"
-            - "./config/apache/php5/timezone.ini:$DOCKER_PHP_CONF_PATH/apache2/conf.d/timezone.ini"
             - "$DOCKER_WWW_ROOT:$DOCKER_WWW_DEST"
             - "$DOCKER_STORAGE_LOCAL_PATH:$DOCKER_STORAGE_MOUNT_POINT"
         env_file:
@@ -78,7 +72,7 @@ services:
             - "8983:8983"
         volumes:
             - "${DOCKER_SOLR_CONF_PATH}:/opt/solr/solr/"
-            - ./data/solr/:/opt/solr/data/
+            - /home/sbressey/docker/wrbm-gb-docker/data/solr/:/opt/solr/data/
             - ./logs/solr/:/opt/solr/logs
         env_file:
             - docker-compose.env

@@ -1,0 +1,12 @@
+version: '2'
+services:
+    nginx:
+        image: klabs/nginx_${DOCKER_PHP_VERSION}
+        volumes:
+            - ./config/nginx/sites-enabled/:/etc/nginx/sites-enabled/
+            - ./config/nginx/environment_common:/etc/nginx/environment_common
+            - ./config/nginx/ez5-common:/etc/nginx/ez5-common
+            - ./config/nginx/fastcgi_common:/etc/nginx/fastcgi_common
+            - ./logs/nginx/:/var/log/nginx
+            - "./config/nginx/php/custom_vars.ini:$DOCKER_PHP_CONF_PATH/fpm/conf.d/custom_vars.ini"
+            - "./config/nginx/php/timezone.ini:$DOCKER_PHP_CONF_PATH/fpm/conf.d/timezone.ini"

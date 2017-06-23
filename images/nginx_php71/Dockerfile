@@ -72,8 +72,7 @@ RUN sed -rie 's|user = www-data|user = site|g' /etc/php/7.1/fpm/pool.d/www.conf 
     sed -rie 's|listen.owner = www-data|listen.owner = site|g' /etc/php/7.1/fpm/pool.d/www.conf
 
 # Disable xdebug
-RUN echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/fpm/php.ini \
-    echo -e "[xdebug] \nxdebug.default_enable=Off" >> /etc/php/7.1/apache2/php.ini
+RUN rm /etc/php/7.1/fpm/conf.d/20-xdebug.ini
 
 # Custom PHP-FPM error log folder
 RUN mkdir /var/log/php/
