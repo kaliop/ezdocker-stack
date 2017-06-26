@@ -179,7 +179,7 @@ buildDockerComposeConfigFileIfNeeded() {
 
         # Ask for storage mountpoints
         read -p "[?] Path to your ezpublish storages on host [/mnt/\$USER]: " storage_local_path
-        storage_local_path=${storage_local_path:-/mnt/\$USER/}
+        storage_local_path=${storage_local_path:-/mnt/\$USER}
 
         echo "Your local storage folder will be mounted in '/mnt/$USER' inside containers"
         echo "(Don't forget to symlink your storage in your ez5 instance after first run)"
@@ -209,7 +209,7 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "export DOCKER_VARNISH_VCL_FILE=$vcl_filepath" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_SOLR_CONF_PATH=$solr_conf_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_LOCAL_PATH=$storage_local_path" >> $DOCKER_COMPOSE_CONFIG_FILE
-        echo "export DOCKER_STORAGE_MOUNT_POINT=/mnt/\$USER/" >> $DOCKER_COMPOSE_CONFIG_FILE
+        echo "export DOCKER_STORAGE_MOUNT_POINT=/mnt/\$USER" >> $DOCKER_COMPOSE_CONFIG_FILE
 
         #Configure PHP version
         configurePhpVersion
