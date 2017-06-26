@@ -16,7 +16,7 @@ php_available_versions=(5.4 5.6 7 7.1)
 available_web_servers=(nginx apache)
 
 usage() {
-    echo "Usage: ./stack.sh build/start/stop/rm/php_switch/purgelogs/reset"
+    echo "Usage: ./stack.sh start|stop|rm|php_switch|web_server_switch|purgelogs|update|reset"
 }
 
 # copy template yml file to final docker-compose.yml file
@@ -29,11 +29,11 @@ buildDockerComposeFile() {
         template_file="docker-compose-template.yml"
 
         #if [ ! -f "$template_file" ]; then
-        #    echo "ERROR ! wrong template file specified : aborting ..."
+        #    echo "ERROR: wrong template file specified. Aborting ..."
         #    exit 1;
         #fi
 
-        echo "No DOCKER_COMPOSE_FILE file found, generating one from template: $template_file"
+        echo "No $DOCKER_COMPOSE_FILE found, copying $template_file ..."
         cp "$template_file" "$DOCKER_COMPOSE_FILE"
     fi
 }
@@ -41,7 +41,7 @@ buildDockerComposeFile() {
 buildDockerComposeLocalEnvFileIfNeeded() {
     if [ ! -f 'docker-compose.env.local' ]; then
 
-        echo "Generating config file docker-compose.env.local...";
+        echo "Generating config file docker-compose.env.local ...";
 
         current_uid=`id -u`
         current_gid=`id -g`
@@ -51,13 +51,12 @@ buildDockerComposeLocalEnvFileIfNeeded() {
     fi
 }
 
-
 configurePhpVersion() {
-    read -p "Which PHP version do you need to use for your project ? (possible values are : 5.4 , 5.6 , 7 or 7.1 - default: 5.6) " php_version
+    read -p "[?] Which PHP version do you want to use? 5.4, [5.6], 7 or 7.1: " php_version
     php_version=${php_version:-5.6}
 
     if [[ ! " ${php_available_versions[@]} " =~ " ${php_version} " ]]; then
-        echo "ERROR ! unsupported php version: aborting ..."
+        echo "ERROR: unsupported PHP version ${php_version}. Aborting ..."
         exit 1;
     fi
 
@@ -91,26 +90,24 @@ configurePhpVersion() {
 }
 
 configureWebServer() {
-
-	 source $DOCKER_COMPOSE_CONFIG_FILE
-
-		echo "Current PHP version : $DOCKER_PHP_VERSION"
-		read -p "Which web server do you want to use ? (possible values are : apache, nginx - default: apache) " web_server_type
+    source $DOCKER_COMPOSE_CONFIG_FILE
+    read -p "[?] Which web server do you want to use? [apache] or nginx: " web_server_type
     web_server_type=${web_server_type:-apache}
 
     if [[ ! " ${available_web_servers[@]} " =~ " ${web_server_type} " ]]; then
-        echo "ERROR ! unsupported web server: aborting ..."
+        echo "ERROR: unsupported web server ${web_server_type}. Aborting ..."
         exit 1;
     fi
 
     # Check web_server & php combination
     if [[ "$web_server_type" == 'nginx' && "$DOCKER_PHP_VERSION" != 'php71' ]]; then
-        echo "Sorry, nginx is only available with php 7.1 for the moment"
+        echo "Sorry, nginx is only available with PHP 7.1 for the moment."
+        echo "Current PHP version: $DOCKER_PHP_VERSION. Aborting ..."
         exit 1;
     fi
 
-		echo "export DOCKER_WEB_SERVER=$web_server_type" >> $DOCKER_COMPOSE_CONFIG_FILE
-		echo "Selected $web_server_type as web server"
+    echo "export DOCKER_WEB_SERVER=$web_server_type" >> $DOCKER_COMPOSE_CONFIG_FILE
+    echo "Selected $web_server_type as web server"
 }
 # Check if some files mounted as volumes exist, and create them if they are not found
 checkRequiredFiles() {
@@ -118,7 +115,7 @@ checkRequiredFiles() {
         echo "~/.gitconfig file not found. Creating empty file"
         touch ~/.gitconfig
         if [ ! -f ~/.gitconfig ]; then
-             echo "~/.gitconfig file can not be created ! Aborting ..."
+             echo "~/.gitconfig file can not be created! Aborting ..."
              exit 1;
         fi
     fi
@@ -127,7 +124,7 @@ checkRequiredFiles() {
         echo "~/.ssh/config file not found. Creating empty file"
         touch ~/.ssh/config
         if [ ! -f ~/.ssh/config ]; then
-             echo "~/.ssh/config file can not be created ! Aborting ..."
+             echo "~/.ssh/config file can not be created! Aborting ..."
              exit 1;
         fi
     fi
@@ -136,12 +133,12 @@ checkRequiredFiles() {
 buildDockerComposeConfigFileIfNeeded() {
     if [ ! -f "$DOCKER_COMPOSE_CONFIG_FILE" ]; then
 
-        echo "Generating config file $DOCKER_COMPOSE_CONFIG_FILE...";
+        echo "Generating config file $DOCKER_COMPOSE_CONFIG_FILE ...";
 
-        read -p "What is your main project name ? : " DOCKER_PROJECT_NAME
+        read -p "[?] What is your main project name? " DOCKER_PROJECT_NAME
         DOCKER_PROJECT_NAME=${DOCKER_PROJECT_NAME:-myproject}
 
-        read -p "Will you use this docker stack for only one project ? [default: no] (y/n) : " site_project
+        read -p "[?] Will you use this docker stack for only one project? y/[n]: " site_project
         site_project=${site_project:-n}
 
         if [ "$site_project" = "y" ]
@@ -155,12 +152,12 @@ buildDockerComposeConfigFileIfNeeded() {
             then
                 #echo "'site' folder does not exist, remember to clone your project in there"
 
-                # In order to make this better than just letting the dev run git clone, we shold check many more things...
-                # F.e. build the git url automatically using the Git repo if the given url is not full...
-                read -p "'site' folder does not exist: please type the Git full url to clone your project : " git_url
+                # In order to make this better than just letting the dev run git clone, we should check many more things...
+                # F.e. build the git url automatically using the Git repo if the given url is not full.
+                read -p "[?] 'site' folder does not exist. Please type the Git full url to clone your project: " git_url
                 git ls-remote "$git_url" &>-
                 if [ "$?" -ne 0 ]; then
-                    echo "ERROR ! invalid or empty git repository : aborting ..."
+                    echo "ERROR: invalid or empty git repository. Aborting ..."
                     exit 1;
                 fi
 
@@ -169,39 +166,39 @@ buildDockerComposeConfigFileIfNeeded() {
 
         else
             # Multi site stack
-            read -p "Enter the full root path of your projects on your host machine (default: /home/$(whoami)/www/): " www_root
+            read -p "[?] Full path of your projects on your host machine [/home/$(whoami)/www]: " www_root
             www_root=${www_root:-/home/$(whoami)/www}
 
             if [ ! -d "$www_root" ]; then
-        		echo "Root directory $www_root does not exist ! Aborting ..."
+        		echo "Root directory $www_root does not exist! Aborting ..."
         		exit ;
         	fi
 
-            www_dest="/var/www/"
+            www_dest="/var/www"
         fi
 
         # Ask for storage mountpoints
-        read -p "Enter path to your ezpublish storages on host (default : /mnt/\$USER/ ) : " storage_local_path
+        read -p "[?] Path to your ezpublish storages on host [/mnt/\$USER]: " storage_local_path
         storage_local_path=${storage_local_path:-/mnt/\$USER/}
 
-        echo "Your local storage folder will be mounted in /mnt/$USER inside containers"
-        echo "(Don't forget to symlink your storage in your ez5 instance after 1st run)"
+        echo "Your local storage folder will be mounted in '/mnt/$USER' inside containers"
+        echo "(Don't forget to symlink your storage in your ez5 instance after first run)"
 
         # Ask for timezone for docker args (needs docker-compsoe v2 format)
-        read -p "Enter your current timezone (default: Europe/Paris) : " timezone
+        read -p "[?] Current timezone [Europe/Paris]: " timezone
         timezone=${timezone:-Europe/Paris}
 
-        echo "Configuring timezone for php ..."
+        echo "Writing timezone to PHP config ..."
         echo -e "[Date]\ndate.timezone=$timezone" > config/cli/php5/timezone.ini
         echo -e "[Date]\ndate.timezone=$timezone" > config/apache/php5/timezone.ini
         echo -e "[Date]\ndate.timezone=$timezone" > config/nginx/php/timezone.ini
 
         # Ask for custom vcl file path
-        read -p "Enter path to Varnish vcl file (default: ./config/varnish/ez54.vcl) : " vcl_filepath
+        read -p "[?] Path to Varnish vcl file [./config/varnish/ez54.vcl]: " vcl_filepath
         vcl_filepath=${vcl_filepath:-./config/varnish/ez54.vcl}
 
         # Ask for custom solr conf folder path
-        read -p "Enter path to solr configuration folder (default: ./config/solr) : " solr_conf_path
+        read -p "[?] Path to solr configuration folder [./config/solr]: " solr_conf_path
         solr_conf_path=${solr_conf_path:-./config/solr}
 
         # Save all env vars in a file that will be included at every call
@@ -246,7 +243,7 @@ case "$1" in
 
     start|run)
         if [ ! $DOCKER_WEB_SERVER ]; then
-           echo "No DOCKER_WEB_SERVER defined ! Please run script with option web_server_switch  ..."
+           echo "No DOCKER_WEB_SERVER defined! Please run script with option web_server_switch"
            exit 1;
         fi
 
@@ -272,7 +269,7 @@ case "$1" in
         configureWebServer
         ;;
 
-	  reset)
+    reset)
         rm $DOCKER_COMPOSE_CONFIG_FILE
         rm docker-compose.env.local
         rm $DOCKER_COMPOSE_FILE
