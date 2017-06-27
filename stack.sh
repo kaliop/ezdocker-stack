@@ -242,9 +242,12 @@ source $DOCKER_COMPOSE_CONFIG_FILE
 case "$1" in
 
     start|run)
+        if [ ! $DOCKER_PHP_VERSION ]; then
+           configurePhpVersion
+        fi
+
         if [ ! $DOCKER_WEB_SERVER ]; then
-           echo "No DOCKER_WEB_SERVER defined! Please run script with option web_server_switch"
-           exit 1;
+           configureWebServer
         fi
 
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
