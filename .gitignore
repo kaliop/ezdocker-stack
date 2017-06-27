@@ -21,7 +21,9 @@
 /logs/mysql/*
 /logs/solr/*
 /logs/varnish/*
+/logs/nginx/*
 !/logs/apache/.gitkeep
+!/logs/nginx/.gitkeep
 !/logs/cli/.gitkeep
 !/logs/memcache/.gitkeep
 !/logs/mysql/.gitkeep
