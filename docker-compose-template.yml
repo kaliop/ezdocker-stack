@@ -72,7 +72,7 @@ services:
             - "8983:8983"
         volumes:
             - "${DOCKER_SOLR_CONF_PATH}:/opt/solr/solr/"
-            - /home/sbressey/docker/wrbm-gb-docker/data/solr/:/opt/solr/data/
+            - ./data/solr/:/opt/solr/data/
             - ./logs/solr/:/opt/solr/logs
         env_file:
             - docker-compose.env
