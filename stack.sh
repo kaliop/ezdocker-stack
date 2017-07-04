@@ -100,13 +100,18 @@ configureWebServer() {
     fi
 
     # Check web_server & php combination
-    if [[ "$web_server_type" == 'nginx' && "$DOCKER_PHP_VERSION" != 'php71' ]]; then
-        echo "Sorry, nginx is only available with PHP 7.1 for the moment."
+    if [[ "$DOCKER_PHP_VERSION" == 'php71' && "$web_server_type" != 'nginx' ]]; then
+        echo "Sorry, PHP 7.1 is only available with nginx for the moment."
         echo "Current PHP version: $DOCKER_PHP_VERSION. Aborting ..."
         exit 1;
     fi
 
-    echo "export DOCKER_WEB_SERVER=$web_server_type" >> $DOCKER_COMPOSE_CONFIG_FILE
+    if grep -q DOCKER_WEB_SERVER "$DOCKER_COMPOSE_CONFIG_FILE"; then
+     sed -i '/DOCKER_WEB_SERVER/c\export DOCKER_WEB_SERVER='$web_server_type "$DOCKER_COMPOSE_CONFIG_FILE" ;
+    else
+     echo "export DOCKER_WEB_SERVER=$web_server_type" >> $DOCKER_COMPOSE_CONFIG_FILE
+    fi
+
     echo "Selected $web_server_type as web server"
 }
 # Check if some files mounted as volumes exist, and create them if they are not found
