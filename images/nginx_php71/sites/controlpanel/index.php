@@ -18,14 +18,17 @@
     <h2>Other servers</h2>
     <ul>
         <li><a href="/memcache/">Memcached Info</a></li>
-        <li><a href="/phpmemadmin/web/index.php">Memcached Admin</a></li>
+        <li><a href="http://admin:pass@localhost:88/phpmemadmin/web/index.php">Memcached Admin</a></li>
         <li><a href="http://<?php echo $_SERVER['SERVER_NAME']; ?>:8983/solr/">Solr</a></li>
         <li><a href="/pma/index.php">PhpMyAdmin</a></li>
-        <li><a href="/va/html/">Varnish</a></li>
+        <li><a href="http://varnish:CacheMeIfYouCan@localhost:88/va/html/">Varnish</a></li>
     </ul>
 
-    <p>credentials for Varnish: varnish / CacheMeIfYouCan</p>
-    <p>credentials for Memcached Admin: admin / pass</p>
-
+    <p>Login & password for Varnish & Memcached Admin are already present in the above links.</p>
+    <p>If needed, here are the credentials: </p>
+    <ul>
+        <li>Varnish : varnish / CacheMeIfYouCan</li>
+        <li>Memcached Admin : admin / pass</li>
+    </ul>
 </body>
 </html>
