@@ -158,7 +158,7 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 GIT_CONFIGURED=$(git config --list | grep "user.email")
-if [ "$GIT_CONFIGURED" == "" ]; then
+if [ "$GIT_CONFIGURED" = "" ]; then
     echo "Your git profile does not seem to be configured"
     echo "Please enter you user name (i.e. John Doe):"
     read LINE
@@ -176,3 +176,7 @@ PS1='${debian_chroot:+($debian_chroot)}\[\033[${PROMPT_U_COLOR}\]\u\[\033[0;37m\
 
 # Move to the most commonly used dir :-)
 cd /var/www/
+
+if [ -f ~/.bash_append ]; then
+    . ~/.bash_append
+fi
