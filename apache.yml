@@ -6,6 +6,8 @@ services:
             - ./config/apache/sites-available/001-dynamic-vhost-ez5.conf:/etc/apache2/sites-available/001-dynamic-vhost-ez5.conf
             - ./config/apache/sites-available/002-dynamic-vhost-ezplatform.conf:/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf
             - ./config/apache/sites-available/003-dynamic-vhost-ez4.conf:/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf
+            - ./config/apache/sites-available/004-dynamic-vhost.conf:/etc/apache2/sites-avalaible/004-dynamic-vhost.conf
+            - ./config/apache/sites-available/004-dynamic-vhost.conf:/etc/apache2/sites-enabled/004-dynamic-vhost.conf
             - ./config/apache/sites-available/ez5-common.conf:/etc/apache2/sites-available/ez5-common.conf
             - ./config/apache/sites-available/ezplatform-common.conf:/etc/apache2/sites-available/ezplatform-common.conf
             - ./logs/apache/:/var/log/apache2
