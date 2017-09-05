@@ -51,6 +51,11 @@ if [ -f "/etc/apache2/sites-available/003-dynamic-vhost-ez4.conf" ];then
     a2ensite 003-dynamic-vhost-ez4.conf
 fi
 
+#Load generic dynamic vhost if found
+if [ -f "/etc/apache2/sites-available/004-dynamic-vhost.conf" ];then
+    a2ensite 004-dynamic-vhost.conf
+fi
+
 trap clean_up SIGTERM
 
 service apache2 restart
