@@ -15,6 +15,7 @@ RUN echo $DOCKER_TIMEZONE > /etc/timezone; dpkg-reconfigure -f noninteractive tz
 RUN apt-get update && \
     apt-get install -y \
     apt-transport-https \
+    debian-archive-keyring \
     curl \
     vim \
     htop \
@@ -23,8 +24,8 @@ RUN apt-get update && \
 
 # varnish
 # -----------------------------------------------------------------------------
-RUN curl https://repo.varnish-cache.org/GPG-key.txt | apt-key add - && \
-    echo "deb http://repo.varnish-cache.org/debian/ wheezy varnish-4.0" >> /etc/apt/sources.list && \
+RUN curl -L https://packagecloud.io/varnishcache/varnish40/gpgkey | apt-key add - && \
+    echo "deb https://packagecloud.io/varnishcache/varnish40/debian/ wheezy main" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y \
     varnish varnish-agent;
