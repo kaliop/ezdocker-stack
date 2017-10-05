@@ -256,8 +256,6 @@ case "$1" in
         fi
 
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" down
-        #Always pull latest images from Docker hub
-        $DOCKER_COMPOSE pull
         $DOCKER_COMPOSE -p "$DOCKER_PROJECT_NAME" up -d
         ;;
 
