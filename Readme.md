@@ -1,13 +1,13 @@
 eZ Publish Web Development Environment
 ============================================================
 
-This repository provides a Docker stack management script and docker-compose.yml templates needed to create and use an eZ Publish Development Environment.
+## Warning
 
-It is to be used in conjunction with another repository which will contain the Application source code.
-The Application source code can be installed in the 'site' directory within the Development Environment root directory, 
-or in your local main projects directory (~/www for example) 
+This repository has been **deprecated** in favor of the [docker-images](https://github.com/kaliop/docker-images/) repository.
 
-All Docker images used in this stack are published on Docker hub, in klabs repository.
+
+
+
 
 ## System Requirements
 
