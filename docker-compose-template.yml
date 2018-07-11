@@ -27,7 +27,7 @@ services:
             - SYS_PTRACE
 
     cli:
-        image: klabs/cli_${DOCKER_PHP_VERSION}
+        image: klabs/php_cli:${DOCKER_PHP_VERSION}
         hostname: ${DOCKER_PROJECT_NAME}_cli
         container_name: cli
         privileged: true
@@ -65,7 +65,7 @@ services:
             - SYS_PTRACE
 
     solr:
-        image: klabs/solr4
+        image: klabs/solr:${DOCKER_SOLR_VERSION}
         hostname: ${DOCKER_PROJECT_NAME}_solr
         container_name: solr
         ports:
