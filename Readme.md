@@ -215,6 +215,14 @@ This panel will give you access to some tools such as PHP info, Apache Info, Var
 To use hostname-based vhosts, you should edit the local hosts file of the computer you are using.
 All hostnames used to point to 127.0.0.1 will trigger the same Apache Vhost.
 
+Hostname mappings are based on a combination of domain patterns, ports and volume mounts
+
+Examples for eZ Publish 5 'site'
+
+	http://my.site.ezdev -> 001-dynamic-vhost-ez5.conf ENV=dev -> /var/www/%2/web -> /var/www/site/web	
+	http://my.site2.ezdev -> 001-dynamic-vhost-ez5.conf ENV=dev -> /var/www/%2/web -> /var/www/site2/web
+	http://my.site.ezdev:82 -> 001-dynamic-vhost-ez5.conf ENV=demo -> /var/www/%2/web -> /var/www/site/web
+
 Port 80 is mapped to haproxy server. By default, haproxy will server your pages directly through Apache, but you can choose whether you want to view your website via Varnish or not.  
 To do this, you must send a specific header called `Backend` and set the desired value : 
 
