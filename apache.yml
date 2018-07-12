@@ -1,7 +1,7 @@
 version: '2'
 services:
     apache:
-        image: klabs/apache_${DOCKER_PHP_VERSION}
+        image: klabs/apache:${DOCKER_PHP_VERSION}
         volumes:
             - ./config/apache/sites-available/001-dynamic-vhost-ez5.conf:/etc/apache2/sites-available/001-dynamic-vhost-ez5.conf
             - ./config/apache/sites-available/002-dynamic-vhost-ezplatform.conf:/etc/apache2/sites-available/002-dynamic-vhost-ezplatform.conf

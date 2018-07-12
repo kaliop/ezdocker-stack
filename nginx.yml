@@ -1,7 +1,7 @@
 version: '2'
 services:
     nginx:
-        image: klabs/nginx_${DOCKER_PHP_VERSION}
+        image: klabs/nginx:${DOCKER_PHP_VERSION}
         volumes:
             - ./config/nginx/sites-enabled/:/etc/nginx/sites-enabled/
             - ./config/nginx/environment_common:/etc/nginx/environment_common

@@ -205,6 +205,9 @@ buildDockerComposeConfigFileIfNeeded() {
         # Ask for custom solr conf folder path
         read -p "[?] Path to solr configuration folder [./config/solr]: " solr_conf_path
         solr_conf_path=${solr_conf_path:-./config/solr}
+		
+        # Solr tag hard coded for now..
+        solr_image_tag="ezfind"
 
         # Save all env vars in a file that will be included at every call
         echo "# in this file we define all env variables used by docker-compose.yml" > $DOCKER_COMPOSE_CONFIG_FILE
@@ -215,6 +218,7 @@ buildDockerComposeConfigFileIfNeeded() {
         echo "export DOCKER_SOLR_CONF_PATH=$solr_conf_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_LOCAL_PATH=$storage_local_path" >> $DOCKER_COMPOSE_CONFIG_FILE
         echo "export DOCKER_STORAGE_MOUNT_POINT=/mnt/\$USER" >> $DOCKER_COMPOSE_CONFIG_FILE
+        echo "export DOCKER_SOLR_VERSION=$solr_image_tag" >> $DOCKER_COMPOSE_CONFIG_FILE
 
         #Configure PHP version
         configurePhpVersion
