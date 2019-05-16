@@ -13,7 +13,7 @@ RUN echo $DOCKER_TIMEZONE > /etc/timezone; dpkg-reconfigure -f noninteractive tz
 # Base packages
 # -----------------------------------------------------------------------------
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -qqy \
-    openjdk-7-jre-headless
+    openjdk-7-jre-headless;
 
 COPY ./solr_4.10 /opt/solr
 COPY init/solr /etc/init.d/solr

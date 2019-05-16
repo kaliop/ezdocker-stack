@@ -1,0 +1,21 @@
+###################### Filebeat Configuration for Apache2 #########################
+
+# Retrieve logs from services
+# @author Andréas 'Screamz' HANSS <ahanss@kaliop.com>
+
+#=========================== Filebeat prospectors =============================
+
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /app-logs/apache/access.log
+  document_type: apache_access
+
+- input_type: log
+  paths:
+    - /app-logs/apache/error.log
+  document_type: apache_error
+
+#----------------------------- Graylog2 output --------------------------------
+output.logstash:
+  hosts: ["graylog-server:5044"]

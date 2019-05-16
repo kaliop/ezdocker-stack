@@ -269,6 +269,14 @@ You can also mount your own bash aliases by mounting a .bash_aliases file in /ho
 
 Solr admin interface can be accessed either through port 8983, i.e http://localhost:8983, or with the /solr/ url, i.e http://www.mysite.ezdev/solr/ .
 
+### Check containers logs
+
+You can various logs for debugging through Graylog stacks.
+
+Just go to http://127.0.0.1:9000/ and fill the form with admin/admin.
+
+For further explanations see [this documentation](./docs/graylog.md)
+
 ## Stopping the Environment
 
     ./stack.sh down

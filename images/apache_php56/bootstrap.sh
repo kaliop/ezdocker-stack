@@ -60,7 +60,6 @@ trap clean_up SIGTERM
 
 service apache2 restart
 
-
 echo [`date`] Bootstrap finished
 
 tail -f /dev/null &

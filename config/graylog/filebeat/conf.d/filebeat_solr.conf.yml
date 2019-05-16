@@ -1,0 +1,16 @@
+###################### Filebeat Configuration for Apache SOLR #########################
+
+# Retrieve logs from services
+# @author Andréas 'Screamz' HANSS <ahanss@kaliop.com>
+
+#=========================== Filebeat prospectors =============================
+
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /app-logs/solr/solr.log
+  document_type: solr
+
+#----------------------------- Graylog2 output --------------------------------
+output.logstash:
+  hosts: ["graylog-server:5047"]

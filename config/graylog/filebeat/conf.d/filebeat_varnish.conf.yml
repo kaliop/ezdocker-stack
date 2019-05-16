@@ -1,0 +1,17 @@
+###################### Filebeat Configuration for Varnish NCSA #########################
+
+# Retrieve logs from services
+# @author Andréas 'Screamz' HANSS <ahanss@kaliop.com>
+
+#=========================== Filebeat prospectors =============================
+
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /app-logs/varnish/varnishncsa.log
+  document_type: varnish
+  include_lines: ['BAN', 'PURGE']
+
+#----------------------------- Graylog2 output --------------------------------
+output.logstash:
+  hosts: ["graylog-server:5046"]
